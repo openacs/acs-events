@@ -113,6 +113,21 @@ begin
     ); 
     attr_id := acs_attribute__create_attribute ( 
         ''acs_event'',	     -- object_type
+        ''status_summary'',  -- attribute_name
+        ''string'',	     -- datatype
+        ''Status Summary'',  -- pretty_name
+        ''Status Summaries'', -- pretty_plural
+        null,		     -- table_name (default)
+        null,		     -- column_name (default)
+        null,		     -- default_value (default)
+        1,		     -- min_n_values (default)
+        1,		     -- max_n_values (default)
+        null,		     -- sort_order (default)
+        ''type_specific'',   -- storage (default)
+        ''f''		     -- static_p (default)
+    ); 
+    attr_id := acs_attribute__create_attribute ( 
+        ''acs_event'',	     -- object_type
         ''html_p'',	     -- attribute_name
         ''string'',	     -- datatype
         ''HTML?'',	     -- pretty_name
@@ -192,15 +207,17 @@ create table acs_events (
     -- The Event API supports methods to retrieve name/description from 
     -- either the event (if defined) or the underlying activity (if not defined)
     --
-    -- acs_event.get_name() 
-    -- acs_event.get_description()
-    -- acs_event.get_html_p()
+    -- acs_event__get_name() 
+    -- acs_event__get_description()
+    -- acs_event__get_html_p()
+    -- acs_event__get_status_summary()
     --
     name                varchar(255),
     description         text,
     --
     -- is the event description written in html?
     html_p              boolean,
+    status_summary	varchar(255),
     --
     -- The following three columns encapsulate the remaining attributes of an Event: 
     -- the activity that takes place during the event, its timespan (a collection of time 
@@ -257,6 +274,14 @@ comment on column acs_events.description is '
         The description of the event.
 ';
 
+comment on column acs_events.html_p is '
+        Whether or not the description is in HTML.
+';
+
+comment on column acs_events.status_summary is '
+        Additional information to display along with the name.
+';
+
 comment on column acs_events.timespan_id is '
     The time span associated with this event.
 ';
@@ -311,6 +336,7 @@ select event_id,
        coalesce(e.name, a.name) as name,
        coalesce(e.description, a.description) as description,
        coalesce(e.html_p, a.html_p) as html_p,
+       coalesce(e.status_summary, a.status_summary) as status_summary,
        e.activity_id,
        timespan_id,
        recurrence_id
@@ -373,6 +399,8 @@ comment on view partially_populated_events is '
 --
 --     get_name        ()
 --     get_description ()
+--     get_html_p ()
+--     get_status_summary ()
 --
 --     timespan_set (timespan_id)
 --     activity_set (activity_id)
@@ -401,6 +429,8 @@ create function acs_event__new (
        -- @param event_id          id to use for new event
        -- @param name              Name of the new event
        -- @param description       Description of the new event
+       -- @param html_p            Is the description HTML?
+       -- @param status_summary    Optional additional status line to display
        -- @param timespan_id       initial time interval set
        -- @param activity_id       initial activity
        -- @param recurrence_id     id of recurrence information
@@ -415,6 +445,8 @@ create function acs_event__new (
        integer,		-- acs_events.event_id%TYPE,	     
        varchar,		-- acs_events.name%TYPE,		     
        text,		-- acs_events.description%TYPE,	     
+       boolean,		-- acs_events.html_p%TYPE,	     
+       text,		-- acs_events.status_summary%TYPE,	     
        integer,		-- acs_events.timespan_id%TYPE,	     
        integer,		-- acs_events.activity_id%TYPE,	     
        integer,		-- acs_events.recurrence_id%TYPE,     
@@ -429,14 +461,16 @@ declare
        new__event_id        alias for $1;  -- default null, 
        new__name            alias for $2;  -- default null,
        new__description     alias for $3;  -- default null,
-       new__timespan_id     alias for $4;  -- default null, 
-       new__activity_id     alias for $5;  -- default null, 
-       new__recurrence_id   alias for $6;  -- default null, 
-       new__object_type     alias for $7;  -- default ''acs_event'', 
-       new__creation_date   alias for $8;  -- default now(),
-       new__creation_user   alias for $9;  -- default null, 
-       new__creation_ip     alias for $10; -- default null, 
-       new__context_id      alias for $11; -- default null 
+       new__html_p          alias for $4; -- default null 
+       new__status_summary  alias for $5; -- default null 
+       new__timespan_id     alias for $6;  -- default null, 
+       new__activity_id     alias for $7;  -- default null, 
+       new__recurrence_id   alias for $8;  -- default null, 
+       new__object_type     alias for $9;  -- default ''acs_event'', 
+       new__creation_date   alias for $10;  -- default now(),
+       new__creation_user   alias for $11;  -- default null, 
+       new__creation_ip     alias for $12; -- default null, 
+       new__context_id      alias for $13; -- default null 
        v_event_id	    acs_events.event_id%TYPE;
 begin
        v_event_id := acs_object__new(
@@ -449,9 +483,10 @@ begin
 	    );
                 
        insert into acs_events
-            (event_id, name, description, activity_id, timespan_id, recurrence_id)
+            (event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id)
        values
-            (v_event_id, new__name, new__description, new__activity_id, new__timespan_id, new__recurrence_id);
+            (v_event_id, new__name, new__description, new__html_p, new__status_summary, new__activity_id, new__timespan_id,
+             new__recurrence_id);
 
        return v_event_id;
 
@@ -644,6 +679,34 @@ begin
        where e.event_id = get_html_p__event_id
 
        return v_html_p;
+
+end;' language 'plpgsql';
+
+create function acs_event__get_status_summary (
+       --
+       -- Returns status_summary or status_summary of the activity associated with the event if 
+       -- status_summary is null.
+       --
+       -- @author W. Scott Meeks
+       --
+       -- @param event_id id of event to get status_summary for
+       --
+       -- @return The status_summary or status_summary of the activity associated with the event if status_summary is null.
+       --
+       integer		-- acs_events.event_id%TYPE 
+)
+returns boolean as '	-- acs_events.status_summary%TYPE
+declare
+       get_status_summary__event_id    in acs_events.event_id%TYPE 
+       v_status_summary		acs_events.status_summary%TYPE; 
+begin
+       select coalesce(e.status_summary, a.status_summary) into v_status_summary
+       from  acs_events e
+       left join acs_activities a
+       on (e.activity_id = a.activity_id)
+       where e.event_id = get_status_summary__event_id
+
+       return v_status_summary;
 
 end;' language 'plpgsql';
 
@@ -900,10 +963,12 @@ begin
 	    null,                     -- event_id (default)
             event_row.name,           -- name
             event_row.description,    -- description
+            event_row.html_p,         -- html_p
+            event_row.status_summary, -- status_summary
             v_timespan_id,	      -- timespan_id
             event_row.activity_id,    -- activity_id`
             event_row.recurrence_id,  -- recurrence_id
-	    object_row.object_type,   -- object_type (default)
+	    ''acs_event'',	      -- object_type (default)
 	    now(),		      -- creation_date (default)
             object_row.creation_user, -- creation_user
             object_row.creation_ip,   -- creation_ip
@@ -1345,22 +1410,4 @@ begin
 		    );
 				    
 end;' language 'plpgsql';
-
-
-
--- JS: THE FUNCTION BELOW CAN BE OVERLOADED
--- JS: BECAUSE THE PARAMETER TYPES ARE THE SAME AS ABOVE.
---    procedure shift_all (
---        recurrence_id   in recurrences.recurrence_id%TYPE default null,
---        start_offset    in number default 0,
---        end_offset      in number default 0
---    )
---    is
---    begin
---        update acs_events_dates
---        set    start_date   = start_date + start_offset,
---               end_date     = end_date + end_offset
---        where recurrence_id = shift_all.recurrence_id;
---    end shift_all;
-
 

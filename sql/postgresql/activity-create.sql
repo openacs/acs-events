@@ -77,6 +77,22 @@ begin
        ''f''		   -- static_p (default)
     );
 
+    attr_id := acs_attribute__create_attribute (
+       ''acs_activity'',   -- object_type
+       ''status_summary'', -- attribute_name
+       ''string'',	   -- data_type
+       ''Status Summary'',  -- pretty_name
+       ''Status Summaries'', -- pretty_plural
+       null,		   -- table_name (default)
+       null,		   -- column_name (default)
+       null,		   --  default_value (default)
+       1,		   -- min_n_values (default)
+       1,		   -- max_n_values (default)
+       null,		   -- sort_order (default)
+       ''type_specific'',  -- storage (default)
+       ''f''		   -- static_p (default)
+    );
+
     return 0;
 
 end;' language 'plpgsql';
@@ -96,7 +112,8 @@ create table acs_activities (
     name                varchar(255) not null,
     description         text,
     -- is the activity description written in html?
-    html_p              boolean default 'f'
+    html_p              boolean default 'f',
+    status_summary      varchar(255)
 );
 
 comment on table acs_activities is '
@@ -125,7 +142,7 @@ comment on table acs_activity_object_map is '
 --	delete()
 --
 --	name()
---      edit (name,description,html_p)
+--      edit (name,description,html_p,status_summary)
 -- 
 --      object_map (object_id)
 --      object_unmap (object_id)
@@ -140,6 +157,8 @@ create function acs_activity__new (
        -- @param activity_id       Id to use for new activity
        -- @param name              Name of the activity 
        -- @param description       Description of the activity
+       -- @param html_p            Is the description HTML?
+       -- @param status_summary    Additional status note (optional)
        -- @param object_type       'acs_activity'
        -- @param creation_date     default now()
        -- @param creation_user     acs_object param
@@ -152,6 +171,7 @@ create function acs_activity__new (
        varchar,			 -- in acs_activities.name%TYPE,
        text,			 -- in acs_activities.description%TYPE
        boolean,			 -- in acs_activities.html_p%TYPE     
+       text,			 -- in acs_activities.status_summary%TYPE     
        varchar,			 -- in acs_object_types.object_type%TYPE
        timestamp,		 -- in acs_objects.creation_date%TYPE
        integer,			 -- in acs_objects.creation_user%TYPE
@@ -164,11 +184,12 @@ declare
        new__name                alias for $2;
        new__description         alias for $3; -- default null,
        new__html_p              alias for $4; -- default ''f'',
-       new__object_type         alias for $5; -- default ''acs_activity''
-       new__creation_date       alias for $6; -- default now(), 
-       new__creation_user       alias for $7; -- default null, 
-       new__creation_ip         alias for $8; -- default null, 
-       new__context_id          alias for $9; -- default null 
+       new__status_summary      alias for $5; -- default null,
+       new__object_type         alias for $6; -- default ''acs_activity''
+       new__creation_date       alias for $7; -- default now(), 
+       new__creation_user       alias for $8; -- default null, 
+       new__creation_ip         alias for $9; -- default null, 
+       new__context_id          alias for $10; -- default null 
        v_activity_id		  acs_activities.activity_id%TYPE;
 begin
        v_activity_id := acs_object__new(
@@ -181,9 +202,9 @@ begin
 	    );
 
        insert into acs_activities
-            (activity_id, name, description,html_p)
+            (activity_id, name, description, html_p, status_summary)
        values
-            (v_activity_id, new__name, new__description,new__html_p);
+            (v_activity_id, new__name, new__description, new__html_p, new__status_summary);
 
        return v_activity_id;
 
@@ -254,25 +275,29 @@ create function acs_activity__edit (
        -- @param name        optional New name for this activity
        -- @param description optional New description for this activity
        -- @param html_p      optional New value of html_p for this activity
+       -- @param status_summary optional New value of status_summary for this activity
        --
        -- @return 0 (procedure dummy)
        --
        integer,		-- acs_activities.activity_id%TYPE, 
        varchar,		-- acs_activities.name%TYPE default null,
        text,		-- acs_activities.description%TYPE default null,
-       boolean		-- acs_activities.html_p%TYPE default null
+       boolean,		-- acs_activities.html_p%TYPE default null
+       text		-- acs_activities.status_summary%TYPE default null,
 ) returns integer as '
 declare
        edit__activity_id   alias for $1;
        edit__name          alias for $2; -- default null,
        edit__description   alias for $3; -- default null,
        edit__html_p        alias for $4; -- default null
+       edit__status_summary alias for $5; -- default null
 begin
 
        update acs_activities
        set    name        = coalesce(edit__name, name),
               description = coalesce(edit__description, description),
-              html_p      = coalesce(edit__html_p, html_p)
+              html_p      = coalesce(edit__html_p, html_p),
+              status_summary = coalesce(edit__status_summary, status_summary)
        where activity_id  = edit__activity_id;
 
        return 0;

@@ -45,6 +45,14 @@ begin
          pretty_plural  => 'HTML?', 
          datatype       => 'string' 
     ); 
+
+    attr_id := acs_attribute.create_attribute ( 
+         object_type    => 'acs_activity', 
+         attribute_name => 'status_summary', 
+         pretty_name    => 'Status Summary', 
+         pretty_plural  => 'Status Summaries', 
+         datatype       => 'string' 
+    ); 
 end;
 /
 show errors
@@ -63,7 +71,8 @@ create table acs_activities (
     -- is the activity description written in html?
     html_p              char(1) 
                         constraint acs_activities_html_p_ck
-                        check(html_p in ('t','f'))
+                        check(html_p in ('t','f')),
+    status_summary      varchar2(255)
 );
 
 comment on table acs_activities is '
@@ -93,6 +102,8 @@ as
          -- @param activity_id       optional id to use for new activity
          -- @param name                         Name of the activity 
          -- @param description          optional description of the activity
+         -- @param html_p               optional description is html
+         -- @param status_summary       optional additional status to display
          -- @param object_type          'acs_activity'
          -- @param creation_date        default sysdate
          -- @param creation_user        acs_object param
@@ -104,6 +115,7 @@ as
          name                in acs_activities.name%TYPE,
          description         in acs_activities.description%TYPE   default null,
          html_p              in acs_activities.html_p%TYPE        default 'f',
+         status_summary      in acs_activities.status_summary%TYPE        default null,
          object_type         in acs_object_types.object_type%TYPE default 'acs_activity', 
          creation_date       in acs_objects.creation_date%TYPE    default sysdate, 
          creation_user       in acs_objects.creation_user%TYPE    default null, 
@@ -140,7 +152,8 @@ as
          activity_id         in acs_activities.activity_id%TYPE, 
          name                in acs_activities.name%TYPE default null,
          description         in acs_activities.description%TYPE default null,
-         html_p              in acs_activities.html_p%TYPE default null
+         html_p              in acs_activities.html_p%TYPE default null,
+         status_summary      in acs_activities.status_summary%TYPE default null
     );
 
     procedure object_map (
@@ -174,6 +187,7 @@ as
          name                in acs_activities.name%TYPE,
          description         in acs_activities.description%TYPE   default null,
          html_p              in acs_activities.html_p%TYPE        default 'f',
+         status_summary      in acs_activities.status_summary%TYPE  default null,
          object_type         in acs_object_types.object_type%TYPE default 'acs_activity', 
          creation_date       in acs_objects.creation_date%TYPE    default sysdate, 
          creation_user       in acs_objects.creation_user%TYPE    default null, 
@@ -193,9 +207,9 @@ as
         );
 
         insert into acs_activities
-            (activity_id, name, description)
+            (activity_id, name, description, html_p, status_summary)
         values
-            (new_activity_id, name, description);
+            (new_activity_id, name, description, html_p, status_summary);
 
         return new_activity_id;
     end new;
@@ -240,14 +254,16 @@ as
          activity_id     in acs_activities.activity_id%TYPE, 
          name            in acs_activities.name%TYPE default null,
          description     in acs_activities.description%TYPE default null,
-         html_p          in acs_activities.html_p%TYPE default null
+         html_p          in acs_activities.html_p%TYPE default null,
+         status_summary  in acs_activities.status_summary%TYPE default null
     )
     is
     begin
         update acs_activities
         set    name        = nvl(edit.name, name),
                description = nvl(edit.description, description),
-               html_p      = nvl(edit.html_p, html_p)
+               html_p      = nvl(edit.html_p, html_p),
+               status_summary = nvl(edit.status_summary, status_summary)
         where activity_id  = edit.activity_id;
     end edit;
 

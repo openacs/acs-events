@@ -68,6 +68,13 @@ begin
     ); 
     attr_id := acs_attribute.create_attribute ( 
         object_type    => 'acs_event', 
+        attribute_name => 'status_summary', 
+        pretty_name    => 'Status Summary', 
+        pretty_plural  => 'Status Summaries', 
+        datatype       => 'string' 
+    ); 
+    attr_id := acs_attribute.create_attribute ( 
+        object_type    => 'acs_event', 
         attribute_name => 'html_p', 
         pretty_name    => 'HTML?', 
         pretty_plural  => '', 
@@ -114,12 +121,14 @@ create table acs_events (
     -- acs_event.get_name() 
     -- acs_event.get_description()
     -- acs_event.get_html_p()
+    -- acs_event.get_status_summary()
     --
     name                varchar2(255),
     description         varchar2(4000),
     -- is the event description written in html
     html_p              char(1) 
                         constraint acs_events_html_p_ck check(html_p in ('t','f')),
+    status_summary	varchar2(255),
     --
     -- The following three columns encapsulate the remaining attributes of an Event: 
     -- the activity that takes place during the event, its timespan (a collection of time 
@@ -174,6 +183,14 @@ comment on column acs_events.name is '
 
 comment on column acs_events.description is '
         The description of the event.
+';
+
+comment on column acs_events.html_p is '
+        Whether or not the description is in HTML.
+';
+
+comment on column acs_events.status_summary is '
+        Additional information to display along with the name.
 ';
 
 comment on column acs_events.timespan_id is '
@@ -232,6 +249,7 @@ select event_id,
        nvl(e.name, a.name) as name,
        nvl(e.description, a.description) as description,
        nvl(e.html_p, a.html_p) as html_p,
+       nvl(e.status_summary, a.status_summary) as status_summary,
        e.activity_id,
        timespan_id,
        recurrence_id
@@ -240,8 +258,8 @@ from   acs_events e,
 where  e.activity_id = a.activity_id;
 
 comment on table acs_events_activities is '
-    This view pulls the event name and description from the underlying
-    activity if necessary.
+    This view pulls the event name, description and status_summary
+    from the underlying activity if necessary.
 ';
 
 -- These views should make it easier to find recurrences that
@@ -294,6 +312,8 @@ comment on table partially_populated_events is '
 --
 --     get_name        ()
 --     get_description ()
+--     get_html_p ()
+--     get_status_summary ()
 --
 --     timespan_set (timespan_id)
 --     activity_set (activity_id)
@@ -321,6 +341,8 @@ as
         -- @param event_id          optional id to use for new event
         -- @param name                  optional Name of the new event
         -- @param description   optional Description of the new event
+        -- @param html_p        optional Description is html
+        -- @param status_summary    optional status information to add to name
         -- @param timespan_id       optional initial time interval set
         -- @param activity_id       optional initial activity
         -- @param recurrence_id     optional id of recurrence information
@@ -335,6 +357,7 @@ as
         name            in acs_events.name%TYPE default null,
         description     in acs_events.description%TYPE default null,
         html_p          in acs_events.html_p%TYPE default null,
+        status_summary  in acs_events.status_summary%TYPE default null,
         timespan_id     in acs_events.timespan_id%TYPE default null, 
         activity_id     in acs_events.activity_id%TYPE default null, 
         recurrence_id   in acs_events.recurrence_id%TYPE default null, 
@@ -398,6 +421,15 @@ as
         --
         event_id            in acs_events.event_id%TYPE 
     ) return acs_events.html_p%TYPE; 
+
+    function get_status_summary (
+        -- Returns status_summary or status_summary of the activity associated with the event if 
+        -- status_summary is null.
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to get status_summary for
+        --
+        event_id            in acs_events.event_id%TYPE 
+    ) return acs_events.status_summary%TYPE; 
 
     procedure timespan_set (
         -- Sets the time span for an event (20.10.15)
@@ -533,6 +565,7 @@ as
         name            in acs_events.name%TYPE default null,
         description     in acs_events.description%TYPE default null,
         html_p          in acs_events.html_p%TYPE default null,
+        status_summary  in acs_events.status_summary%TYPE default null,
         timespan_id     in acs_events.timespan_id%TYPE default null, 
         activity_id     in acs_events.activity_id%TYPE default null, 
         recurrence_id   in acs_events.recurrence_id%TYPE default null, 
@@ -555,9 +588,9 @@ as
         );
                 
         insert into acs_events
-            (event_id, name, description, html_p, activity_id, timespan_id, recurrence_id)
+            (event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id)
         values
-            (new_event_id, name, description, html_p, activity_id, timespan_id, recurrence_id);
+            (new_event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id);
 
         return new_event_id;
     end new; 
@@ -657,6 +690,20 @@ as
 
         return html_p;
     end get_html_p;
+
+    function get_status_summary (
+        event_id    in acs_events.event_id%TYPE 
+    ) return acs_events.status_summary%TYPE
+    is
+        status_summary acs_events.status_summary%TYPE; 
+    begin
+        select nvl(e.status_summary, a.status_summary) into status_summary
+        from  acs_events e, acs_activities a
+        where event_id      = get_status_summary.event_id
+        and   e.activity_id = a.activity_id(+);
+
+        return status_summary;
+    end get_status_summary;
 
     procedure timespan_set (
         event_id        in acs_events.event_id%TYPE,
@@ -774,6 +821,8 @@ as
          new_event_id := new(
             name          => event.name,
             description   => event.description,
+            html_p        => event.html_p,
+            status_summary => event.status_summary,
             timespan_id   => new_timespan_id,
             activity_id   => event.activity_id,
             recurrence_id => event.recurrence_id,

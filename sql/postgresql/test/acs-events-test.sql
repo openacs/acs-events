@@ -106,6 +106,7 @@ begin
 							      ''Testing (pre-edit)'',
 							      ''Making sure the acs_activity code works (pre-edit)'',
 							      ''t'',
+                                                              null,
 							      ''acs_activity'',
 							      now(),
 							      null,
@@ -184,6 +185,8 @@ begin
 	-- Create a null event for test of existence functions
 	insert_instances__event_id := acs_event__new(null,
 				                     null,
+				                     null,
+                                                     null,
 						     null,
 						     null,
 						     null,
@@ -347,7 +350,7 @@ begin
 							   to_date(''2001-12-01'',''YYYY-MM-DD''),
 							   null);
 
-	insert_instances__event_id  := acs_event__new(null,''Weekly'',null,
+	insert_instances__event_id  := acs_event__new(null,''Weekly'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -393,7 +396,7 @@ begin
 							   to_date(''2001-05-01'',''YYYY-MM-DD''),
 							   null);
 
-	insert_instances__event_id  := acs_event__new(null,''month_by_date'',null,
+	insert_instances__event_id  := acs_event__new(null,''month_by_date'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -437,7 +440,7 @@ begin
 							   to_date(''2002-02-01'',''YYYY-MM-DD''),
 							   null);
 
-	insert_instances__event_id  := acs_event__new(null,''month_by_date'',null,
+	insert_instances__event_id  := acs_event__new(null,''month_by_date'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -488,7 +491,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''every 2 days'',null,
+	insert_instances__event_id  := acs_event__new(null,''every 2 days'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -538,7 +541,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''every 2 days'',null,
+	insert_instances__event_id  := acs_event__new(null,''every 2 days'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -588,7 +591,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''yearly (one DST day)'',null,
+	insert_instances__event_id  := acs_event__new(null,''yearly (one DST day)'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -631,7 +634,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''yearly (non-DST)'',null,
+	insert_instances__event_id  := acs_event__new(null,''yearly (non-DST)'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -675,7 +678,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''yearly (DST)'',null,
+	insert_instances__event_id  := acs_event__new(null,''yearly (DST)'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -717,7 +720,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''last_of_month'',null,
+	insert_instances__event_id  := acs_event__new(null,''last_of_month'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -763,7 +766,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''last_of_month'',null,
+	insert_instances__event_id  := acs_event__new(null,''last_of_month'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -809,7 +812,7 @@ begin
 							   ''recur_every3'');
 
 
-	insert_instances__event_id  := acs_event__new(null,''custom'',null,
+	insert_instances__event_id  := acs_event__new(null,''custom'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -856,7 +859,7 @@ begin
 							   null);
 
 
-	insert_instances__event_id  := acs_event__new(null,''month_by_day'',null,
+	insert_instances__event_id  := acs_event__new(null,''month_by_day'',null, null, null,
 				      insert_instances__timespan_id,
 				      insert_instances__activity_id,
 				      insert_instances__recurrence_id,
@@ -925,8 +928,8 @@ begin
 							   );
 
 	-- Insert two non-recurring event to test acs_event__delete, using acs_event__new alone
-	PERFORM acs_event__new(null,null,null,null,null,null,''acs_event'',now(),null,null,null);
-	insert_instances__event_id := acs_event__new(null,''Another event'',''Yet another event description'',
+	PERFORM acs_event__new(null,null,null,null,null,null,null,null,''acs_event'',now(),null,null,null);
+	insert_instances__event_id := acs_event__new(null,''Another event'',''Yet another event description'', null, null,
 			                             insert_instances__timespan_id,null,null,''acs_event'',now(),null,null,null);
 
 
