@@ -60,7 +60,7 @@ begin
 end;' language 'plpgsql';
 
 -- This is an example of a simple custom recurrence function: recur every three days
-create function recur_every3(timestamp,integer)
+create function recur_every3(timestamp with time zone,integer)
 returns timestamp as '
 declare
 	recur_every3__date	alias for $1;

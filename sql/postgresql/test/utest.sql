@@ -119,7 +119,7 @@ begin
 		v_dateref
 		);
 
-     v_datetest := now() + 1;
+     v_datetest := now() + interval ''1 days'';
 
      PERFORM ut_assert__eq(
 		''Test of ut_assert__eq (timestamp,timestamp).'',

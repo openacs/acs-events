@@ -78,14 +78,14 @@ create function to_interval (
        integer,
        varchar
 )
-returns timespan as '	
+returns interval as '	
 declare    
        interval__number	     alias for $1;
        interval__units	     alias for $2;
 begin
 
 	-- We should probably do unit checking at some point
-	return ('''''''' || interval__number || '' '' || interval__units || '''''''')::timespan;
+	return ('''''''' || interval__number || '' '' || interval__units || '''''''')::interval;
 
 end;' language 'plpgsql';
 
