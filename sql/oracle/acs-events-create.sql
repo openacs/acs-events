@@ -587,7 +587,6 @@ as
         new_event_id := acs_object.new(
             object_id => event_id,
             object_type => object_type,
-            title => name,
             creation_date => creation_date,
             creation_user => creation_user,
             creation_ip => creation_ip,
