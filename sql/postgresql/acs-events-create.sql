@@ -1105,7 +1105,7 @@ begin
         -- Set cutoff date to stop populating the DB with recurrences
         -- EventFutureLimit is in years. (a parameter of the service)
         if insert_instances__cutoff_date is null then
-           v_stop_date := add_months(now(), 12 * to_number(acs_event__get_value(''EventFutureLimit''),''99999''));
+           v_stop_date := add_months(now(), 12 * to_number(acs_event__get_value(''EventFutureLimit''),''99999'')::INT);
         else
            v_stop_date := insert_instances__cutoff_date;
         end if;
@@ -1177,7 +1177,7 @@ begin
                 v_last_day := add_months(last_day(v_current_date), v_n_intervals - 1);
                 -- Find correct week and go to correct day of week
                 v_current_date := next_day(v_last_day + 
-				              to_interval(7 * (to_number(to_char(v_current_date,''W''),''99'') - 1),
+				              to_interval(7 * (to_number(to_char(v_current_date,''W''),''99'')::INT - 1),
 							  ''days''),
                                             to_char(v_current_date, ''DAY''));
 	    end if;
