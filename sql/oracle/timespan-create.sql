@@ -5,7 +5,7 @@
 -- API:
 --
 --       new        (start_date, end_date)
---       delete     ()
+--       del     ()
 --
 --       edit       (start_date, end_date)
 --
@@ -59,7 +59,7 @@ as
          end_date       in time_intervals.end_date%TYPE default null
     ) return time_intervals.interval_id%TYPE;
 
-    procedure delete (
+    procedure del (
          -- Deletes the given time interval
          -- @author W. Scott Meeks
          -- @param interval_id  id of the interval to delete
@@ -179,14 +179,14 @@ as
         return interval_id;
     end new;
 
-    procedure delete (
+    procedure del (
         interval_id in time_intervals.interval_id%TYPE
     )
     is
     begin
         delete time_intervals
-        where  interval_id = time_interval.delete.interval_id;
-    end delete;
+        where  interval_id = time_interval.del.interval_id;
+    end del;
 
     procedure edit (
         interval_id     in time_intervals.interval_id%TYPE,
@@ -389,7 +389,7 @@ comment on table timespans is '
 -- 
 --     new          (interval_id)
 --     new          (start_date, end_date)
---     delete       ()
+--     del       ()
 --
 -- Methods to join additional time intervals with an existing timespan:
 --
@@ -427,7 +427,7 @@ as
         end_date        in time_intervals.end_date%TYPE default null
     ) return timespans.timespan_id%TYPE;
 
-    procedure delete (
+    procedure del (
         -- Deletes the timespan and any contained intervals 
         -- @author W. Scott Meeks
         -- @param timespan_id   id of timespan to delete
@@ -503,7 +503,7 @@ as
     -- 
     function overlaps_interval_p (
         timespan_id     in timespans.timespan_id%TYPE,
-        interval_id     in time_intervals.interval_id%TYPE
+        interval_id     in time_intervals.interval_id%TYPE default null
     ) return char;
 
     function overlaps_p (
@@ -558,7 +558,7 @@ as
         return new(time_interval.new(start_date, end_date));
     end new;
 
-    procedure delete (
+    procedure del (
         timespan_id in timespans.timespan_id%TYPE
     )
     is
@@ -568,8 +568,8 @@ as
         delete from time_intervals
         where  interval_id in (select interval_id
                                from   timespans
-                               where  timespan_id = timespan.delete.timespan_id);
-    end delete;
+                               where  timespan_id = timespan.del.timespan_id);
+    end del;
 
     --
     -- Join a new timespan or time interval to an existing timespan

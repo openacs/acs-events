@@ -368,7 +368,7 @@ as
         context_id      in acs_objects.context_id%TYPE default null 
     ) return acs_events.event_id%TYPE; 
 
-    procedure delete ( 
+    procedure del ( 
         -- Deletes an event (20.10.40)
         -- Also deletes party mappings (via on delete cascade).
         -- If this is the last instance of a recurring event, the recurrence
@@ -601,7 +601,7 @@ as
         return new_event_id;
     end new; 
 
-    procedure delete ( 
+    procedure del ( 
         event_id in acs_events.event_id%TYPE 
     )
     is
@@ -609,16 +609,16 @@ as
     begin
         select recurrence_id into recurrence_id
         from   acs_events
-        where  event_id = acs_event.delete.event_id;
+        where  event_id = acs_event.del.event_id;
 
         -- acs_events and acs_event_party_map deleted via on delete cascade
-        acs_object.delete(event_id); 
+        acs_object.del(event_id); 
 
         -- Check for no more instances and delete recurrence if exists
         if instances_exist_p(recurrence_id) = 'f' then
-            recurrence.delete(recurrence_id);
+            recurrence.del(recurrence_id);
         end if;
-    end delete;
+    end del;
 
     procedure delete_all (
         event_id in acs_events.event_id%TYPE
@@ -646,7 +646,7 @@ as
     begin
         if recurrence_id is not null then
             for event_id in event_id_cursor loop
-                acs_event.delete(event_id.event_id);
+                acs_event.del(event_id.event_id);
             end loop;
         end if;
     end delete_all_recurrences;

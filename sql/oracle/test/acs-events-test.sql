@@ -353,9 +353,9 @@ IS
 
 	-- Clean up
 	acs_event.delete_all(event_id);
-	recurrence.delete(recurrence_id);
-	acs_activity.delete(activity_id);
-	timespan.delete(timespan_id);
+	recurrence.del(recurrence_id);
+	acs_activity.del(activity_id);
+	timespan.del(timespan_id);
    END ut_INSERT_INSTANCES;
 
 --     PROCEDURE ut_INSTANCES_EXIST_P IS

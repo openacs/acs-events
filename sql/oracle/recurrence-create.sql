@@ -140,7 +140,7 @@ as
          custom_func            in recurrences.custom_func%TYPE default null
     ) return recurrences.recurrence_id%TYPE;
 
-    procedure delete (
+    procedure del (
          -- Deletes the recurrence
          -- @author W. Scott Meeks
          -- @param recurrence_id id of recurrence to delete
@@ -191,14 +191,14 @@ as
     end new;
 
     -- Note: this will fail if there are any events_with this recurrence
-    procedure delete (
+    procedure del (
          recurrence_id in recurrences.recurrence_id%TYPE
     )
     is
     begin
         delete from recurrences
-        where  recurrence_id = recurrence.delete.recurrence_id;
-    end delete;
+        where  recurrence_id = recurrence.del.recurrence_id;
+    end del;
 
 end recurrence;
 /

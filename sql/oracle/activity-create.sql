@@ -132,7 +132,7 @@ as
         
     ) return acs_activities.name%TYPE;
  
-    procedure delete ( 
+    procedure del ( 
          -- Deletes an activity
          -- @author W. Scott Meeks
          -- @param activity_id      id of activity to delete
@@ -237,7 +237,7 @@ as
     end;
 
          
-    procedure delete ( 
+    procedure del ( 
          activity_id in acs_activities.activity_id%TYPE 
     )
     is
@@ -245,8 +245,8 @@ as
          -- Cascade will cause delete from acs_activities 
          -- and acs_activity_object_map
 
-         acs_object.delete(activity_id); 
-    end delete;
+         acs_object.del(activity_id); 
+    end del;
 
     -- NOTE: can't use update
 

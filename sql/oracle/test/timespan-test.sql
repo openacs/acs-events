@@ -158,7 +158,7 @@ as
 	    new_interval_id := time_interval.new(date1, date2);
 
 	-- delete the row.
-	time_interval.delete(interval_id => new_interval_id);
+	time_interval.del(interval_id => new_interval_id);
 
  	-- verify time interval not there.
  	utassert.eqtable (
@@ -193,9 +193,9 @@ as
 		);
 
 		-- Clean up
-		time_interval.delete(interval_1_id);
-		time_interval.delete(interval_2_id);
-		time_interval.delete(interval_3_id);
+		time_interval.del(interval_1_id);
+		time_interval.del(interval_2_id);
+		time_interval.del(interval_3_id);
 	end ut_eq;
 
 	procedure ut_edit
@@ -384,8 +384,8 @@ as
 		);
 
 		-- Delete the test intervals
-		time_interval.delete(interval_1_id);
-		time_interval.delete(interval_2_id);
+		time_interval.del(interval_1_id);
+		time_interval.del(interval_2_id);
 
 	end ut_overlaps_p;
 
@@ -560,7 +560,7 @@ IS
 		true
 	 );
 
-	 timespan.delete(timespan_copy_id);
+	 timespan.del(timespan_copy_id);
 
 	 timespan_copy_id := timespan.copy(timespan_1_id, 1);
 
@@ -584,9 +584,9 @@ IS
 	 );
 
 	 -- Cleanup
-	 timespan.delete(timespan_1_id);
-	 timespan.delete(timespan_2_id);
-	 timespan.delete(timespan_copy_id);
+	 timespan.del(timespan_1_id);
+	 timespan.del(timespan_2_id);
+	 timespan.del(timespan_copy_id);
    END ut_COPY;
 
    PROCEDURE ut_DELETE IS
@@ -620,7 +620,7 @@ IS
 		't'
 	 );
 
-	 timespan.delete(timespan_id);
+	 timespan.del(timespan_id);
 
       utAssert.eq (
 		'Test of EXISTS_P false',
@@ -704,8 +704,8 @@ IS
 		);
 
 		-- Cleanup
-		timespan.delete(timespan_1_id);
-		timespan.delete(timespan_2_id);
+		timespan.del(timespan_1_id);
+		timespan.del(timespan_2_id);
    END ut_JOIN1;
 
    PROCEDURE ut_JOIN2 IS
@@ -751,8 +751,8 @@ IS
 		);
 
 		-- Cleanup
-		timespan.delete(timespan_1_id);
-		time_interval.delete(interval_1_id);
+		timespan.del(timespan_1_id);
+		time_interval.del(interval_1_id);
    END ut_JOIN2;
 
    PROCEDURE ut_JOIN_INTERVAL IS
@@ -798,8 +798,8 @@ IS
 		);
 
 		-- Cleanup
-		timespan.delete(timespan_1_id);
-		time_interval.delete(interval_3_id);
+		timespan.del(timespan_1_id);
+		time_interval.del(interval_3_id);
    END ut_JOIN_INTERVAL;
 
    PROCEDURE ut_MULTI_INTERVAL_P IS
@@ -830,8 +830,8 @@ IS
 	 );
 
 	 -- Cleanup
-		timespan.delete(timespan_id);
-		time_interval.delete(interval_id);
+		timespan.del(timespan_id);
+		time_interval.del(interval_id);
  END ut_MULTI_INTERVAL_P;
 
    PROCEDURE ut_NEW1 IS
@@ -854,8 +854,8 @@ IS
 	);
 
 	-- Cleanup
-	time_interval.delete(interval_id);
-	timespan.delete(timespan_id);
+	time_interval.del(interval_id);
+	timespan.del(timespan_id);
    END ut_NEW1;
 
    PROCEDURE ut_NEW2 IS
@@ -879,7 +879,7 @@ IS
 		'select to_date(''' || date1 || '''), to_date(''' || date2 || ''') from dual'
 	);
 	-- Cleanup
-	timespan.delete(timespan_id);
+	timespan.del(timespan_id);
    END ut_NEW2;
 
    PROCEDURE ut_OVERLAPS_INTERVAL_P IS
@@ -914,9 +914,9 @@ IS
 	 );
 
 	-- Cleanup
-	timespan.delete(timespan_id);
-	time_interval.delete(interval_1_id);
-	time_interval.delete(interval_2_id);
+	timespan.del(timespan_id);
+	time_interval.del(interval_1_id);
+	time_interval.del(interval_2_id);
    END ut_OVERLAPS_INTERVAL_P;
 
    PROCEDURE ut_OVERLAPS_P1 IS
@@ -951,9 +951,9 @@ IS
 	 );
 
 	-- Cleanup
-	timespan.delete(timespan_1_id);
-	timespan.delete(timespan_2_id);
-	timespan.delete(timespan_3_id);
+	timespan.del(timespan_1_id);
+	timespan.del(timespan_2_id);
+	timespan.del(timespan_3_id);
    END ut_OVERLAPS_P1;
 
    PROCEDURE ut_OVERLAPS_P2 IS
@@ -988,7 +988,7 @@ IS
 	 );
 
 	-- Cleanup
-	timespan.delete(timespan_id);
+	timespan.del(timespan_id);
    END ut_OVERLAPS_P2;
 
 	begin
