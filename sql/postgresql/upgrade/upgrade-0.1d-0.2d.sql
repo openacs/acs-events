@@ -1,9 +1,7 @@
 -- created by arjun@openforce.net 
 -- from a bug fix by  Deds Castillo
 
-drop function acs_event__recurrence_timespan_edit;
-
-create function acs_event__recurrence_timespan_edit (
+create or replace function acs_event__recurrence_timespan_edit (
        integer,
        timestamp,
        timestamp
@@ -45,3 +43,34 @@ BEGIN
         return p_event_id;
 END;
 ' language 'plpgsql';
+
+
+-- to_interval() now returns 'timespan' not 'interval'
+
+create or replace function to_interval (
+       --
+       -- Convert an integer to the specified interval
+       --
+       -- Utility function so we do not have to remember how to escape
+       -- double quotes when we typecast an integer to an interval
+       --
+       -- @author jowell@jsabino.com
+       --
+       -- @param interval_number	Integer to convert to interval
+       -- @param interval_units		Interval units
+       --
+       -- @return interval equivalent of interval_number, in interval_units units
+       --       
+       integer,
+       varchar
+)
+returns timespan as '	
+declare    
+       interval__number	     alias for $1;
+       interval__units	     alias for $2;
+begin
+
+	-- We should probably do unit checking at some point
+	return ('''''''' || interval__number || '' '' || interval__units || '''''''')::timespan;
+
+end;' language 'plpgsql';

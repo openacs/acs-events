@@ -1,4 +1,6 @@
--- RBM: All this to replace one function - 2002-10-06
+-- @author Vinod Kurup (vinod@kurup.com)
+-- @creation-date 2002-10-27
+-- from a bug fix by  Deds Castillo
 
 create or replace package acs_event
 as 
@@ -401,21 +403,13 @@ as
     begin
         -- get the initial offsets
         select start_date, end_date into v_one_start_date, v_one_end_date
-          from time_intervals, timespans, acs_events
-         where time_intervals.interval_id = timespans.interval_id 
-	   and timespans.timespan_id = acs_events.timespan_id 
-	   and event_id= recurrence_timespan_edit.event_id;
+        from time_intervals, timespans, acs_events
+        where time_intervals.interval_id = timespans.interval_id and
+        timespans.timespan_id = acs_events.timespan_id and
+        event_id= recurrence_timespan_edit.event_id;
 
-	-- RBM: Converted inneficient query to INNER JOINs (2002-10-06)
-        -- (select * from time_intervals where interval_id in (select interval_id from timespans where timespan_id in (select timespan_id from acs_events where recurrence_id = (select recurrence_id from acs_events where event_id = recurrence_timespan_edit.event_id))))
-
-        FOR v_timespan in
-            SELECT ti.*
-              FROM time_intervals ti, timespans t, acs_events ae
-             WHERE ti.interval_id = t.interval_id
-               AND t.timespan_id = ae.timespan_id
-               AND ae.event_id = recurrence_timespan_edit.event_id 
-
+        for v_timespan in 
+        (select * from time_intervals where interval_id in (select interval_id from timespans where timespan_id in (select timespan_id from acs_events where recurrence_id = (select recurrence_id from acs_events where event_id = recurrence_timespan_edit.event_id))))
         LOOP
                 time_interval.edit(v_timespan.interval_id, v_timespan.start_date + (start_date - v_one_start_date), v_timespan.end_date + (end_date - v_one_end_date));
         END LOOP;
