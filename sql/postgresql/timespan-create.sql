@@ -24,8 +24,8 @@ create table time_intervals (
     interval_id         integer
                         constraint time_intervals_pk
                         primary key,
-    start_date          timestamp,
-    end_date            timestamp,
+    start_date          timestamptz,
+    end_date            timestamptz,
     constraint time_interval_date_order_ck
     check(start_date <= end_date)
 );
@@ -59,8 +59,8 @@ create function time_interval__new (
        --
        -- @return id of new time interval
        --
-       timestamp,	-- time_intervals.start_date%TYPE default null,
-       timestamp	-- time_intervals.end_date%TYPE default null
+       timestamptz,	-- time_intervals.start_date%TYPE default null,
+       timestamptz	-- time_intervals.end_date%TYPE default null
 ) 
 returns integer as '	-- time_intervals.interval_id%TYPE
 declare
@@ -120,8 +120,8 @@ create function time_interval__edit (
        -- @return 0 (procedure dummy)
        --
        integer,		    -- time_intervals.interval_id%TYPE,
-       timestamp,	    -- time_intervals.start_date%TYPE default null,
-       timestamp	    -- time_intervals.end_date%TYPE default null
+       timestamptz,	    -- time_intervals.start_date%TYPE default null,
+       timestamptz	    -- time_intervals.end_date%TYPE default null
 )
 returns integer as '
 declare
@@ -252,10 +252,10 @@ returns boolean as '
 declare
        overlaps_p__interval_id_1   alias for $1;
        overlaps_p__interval_id_2   alias for $2;
-       v_start_1		   timestamp;
-       v_start_2		   timestamp;
-       v_end_1			   timestamp;
-       v_end_2			   timestamp;
+       v_start_1		   timestamptz;
+       v_start_2		   timestamptz;
+       v_end_1			   timestamptz;
+       v_end_2			   timestamptz;
 begin
        -- Pull out the start and end dates and call the main overlaps_p.
        select start_date, end_date
@@ -291,8 +291,8 @@ create function time_interval__overlaps_p (
        -- @return true if the interval bounded by start_date through end_date, false otherwise.
        --
        integer,		-- time_intervals.interval_id%TYPE,
-       timestamp,	-- time_intervals.start_date%TYPE default null,
-       timestamp	-- time_intervals.end_date%TYPE default null
+       timestamptz,	-- time_intervals.start_date%TYPE default null,
+       timestamptz	-- time_intervals.end_date%TYPE default null
 )
 returns boolean as '
 declare
@@ -331,10 +331,10 @@ create function time_interval__overlaps_p (
        -- 
        -- @return true if intervals overlap, otherwise false.
        --
-       timestamp,	-- time_intervals.start_date%TYPE,
-       timestamp,	-- time_intervals.end_date%TYPE,
-       timestamp,	-- time_intervals.start_date%TYPE,
-       timestamp	-- time_intervals.end_date%TYPE
+       timestamptz,	-- time_intervals.start_date%TYPE,
+       timestamptz,	-- time_intervals.end_date%TYPE,
+       timestamptz,	-- time_intervals.start_date%TYPE,
+       timestamptz	-- time_intervals.end_date%TYPE
 )
 returns boolean as '
 declare
@@ -692,8 +692,8 @@ create function timespan__new (
        --
        -- @return Id of new timespan       
        --
-       timestamp,	--  time_intervals.start_date%TYPE default null,
-       timestamp	--  time_intervals.end_date%TYPE default null
+       timestamptz,	--  time_intervals.start_date%TYPE default null,
+       timestamptz	--  time_intervals.end_date%TYPE default null
 )
 returns integer as '	--  timespans.timespan_id%TYPE
 declare
@@ -801,8 +801,8 @@ create function timespan__join (
        -- @return Id of interval being joined
        --
        integer,		-- timespans.timespan_id%TYPE,
-       timestamp,	-- time_intervals.start_date%TYPE
-       timestamp	-- time_intervals.end_date%TYPE
+       timestamptz,	-- time_intervals.start_date%TYPE
+       timestamptz	-- time_intervals.end_date%TYPE
 )
 returns integer as '	-- time_intervals.interval_id%TYPE
 declare
@@ -984,8 +984,8 @@ returns boolean as '
 declare
        overlaps_interval_p__timespan_id   alias for $1;
        overlaps_interval_p__interval_id   alias for $2; -- default null
-       v_start_date		  timestamp;
-       v_end_date		  timestamp;
+       v_start_date		  timestamptz;
+       v_end_date		  timestamptz;
 begin
        select start_date, end_date
        into   v_start_date, v_end_date
@@ -1057,8 +1057,8 @@ create function timespan__overlaps_p (
        -- @return true if interval with start and end dates overlaps with second timespan, otherwise false.
        --
        integer,		-- timespans.timespan_id%TYPE,
-       timestamp,	-- time_intervals.start_date%TYPE
-       timestamp	-- time_intervals.end_date%TYPE
+       timestamptz,	-- time_intervals.start_date%TYPE
+       timestamptz	-- time_intervals.end_date%TYPE
 ) 
 returns boolean as '
 declare

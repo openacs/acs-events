@@ -451,7 +451,7 @@ create function acs_event__new (
        integer,		-- acs_events.activity_id%TYPE,	     
        integer,		-- acs_events.recurrence_id%TYPE,     
        varchar,		-- acs_object_types.object_type%TYPE, 
-       timestamp,	-- acs_objects.creation_date%TYPE,    
+       timestamptz,	-- acs_objects.creation_date%TYPE,    
        integer,		-- acs_objects.creation_user%TYPE,    
        varchar,		-- acs_objects.creation_ip%TYPE,	     
        integer		-- acs_objects.context_id%TYPE,	     
@@ -741,16 +741,16 @@ end;' language 'plpgsql';
 
 create function acs_event__recurrence_timespan_edit (
        integer,
-       timestamp,
-       timestamp
+       timestamptz,
+       timestamptz
 ) returns integer as '
 DECLARE
         p_event_id                      alias for $1;
         p_start_date                    alias for $2;
         p_end_date                      alias for $3;
         v_timespan                   RECORD;
-        v_one_start_date             timestamp;
-        v_one_end_date               timestamp;
+        v_one_start_date             timestamptz;
+        v_one_end_date               timestamptz;
 BEGIN
         -- get the initial offsets
         select start_date,
@@ -1064,7 +1064,7 @@ create function acs_event__insert_instances (
        -- @return 0 (procedure dummy)
        --
        integer,		-- acs_events.event_id%TYPE, 
-       timestamp	-- default null
+       timestamptz	-- default null
 )
 returns integer as '
 declare
@@ -1076,14 +1076,14 @@ declare
        v_interval_name		       recurrence_interval_types.interval_name%TYPE;
        v_n_intervals		       recurrences.every_nth_interval%TYPE;
        v_days_of_week		       recurrences.days_of_week%TYPE;
-       v_last_date_done		       timestamp;
-       v_stop_date		       timestamp;
-       v_start_date		       timestamp;
-       v_event_date		       timestamp;
+       v_last_date_done		       timestamptz;
+       v_stop_date		       timestamptz;
+       v_start_date		       timestamptz;
+       v_event_date		       timestamptz;
        v_diff			       integer;
-       v_current_date		       timestamp;
-       v_last_day		       timestamp;
-       v_week_date		       timestamp;
+       v_current_date		       timestamptz;
+       v_last_day		       timestamptz;
+       v_week_date		       timestamptz;
        v_instance_count		       integer;
        v_days_length		       integer;
        v_days_index		       integer;

@@ -65,7 +65,7 @@ create table recurrences (
     -- Indicates when this event should stop recurring.  Null indicates
     -- recur indefinitely.
     --
-    recur_until          timestamp,
+    recur_until          timestamptz,
     --
     -- Recurring events can be only partially populated if fully populating
     -- the events would require inserting too many instances.  This
@@ -75,7 +75,7 @@ create table recurrences (
     -- then this column will always be prior to or the same as recur_until.
     -- This column will be null until some recurrences have been added.
     --
-    db_populated_until   timestamp,
+    db_populated_until   timestamptz,
     --
     -- This column holds the name of a PL/SQL function that will be called
     -- to generate dates of recurrences if interval_type is 'custom'
@@ -140,7 +140,7 @@ create function recurrence__new (
        varchar,		-- recurrence_interval_types.interval_name%TYPE,
        integer,		-- recurrences.every_nth_interval%TYPE,
        varchar,		-- recurrences.days_of_week%TYPE default null,
-       timestamp,	-- recurrences.recur_until%TYPE default null,
+       timestamptz,	-- recurrences.recur_until%TYPE default null,
        varchar		-- recurrences.custom_func%TYPE default null
 ) 
 returns integer as '	-- recurrences.recurrence_id%TYPE

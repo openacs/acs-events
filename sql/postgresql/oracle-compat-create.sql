@@ -101,10 +101,10 @@ create function next_day (
        --
        -- @return The date of the next weekday that is later than somedate
        --
-       timestamp,     -- somedate
+       timestamptz,   -- somedate
        varchar	      -- weekday 	      
 )
-returns timestamp as '
+returns timestamptz as '
 declare
        next_day__somedate	alias for $1;
        next_day__weekday	alias for $2;
@@ -143,10 +143,10 @@ create function add_months (
        --
        -- @return The date plus n_months full months
        --
-       timestamp, 
+       timestamptz, 
        integer
 )
-returns timestamp as '
+returns timestamptz as '
 declare
        add_months__somedate	alias for $1;
        add_months__n_months	alias for $2;
@@ -167,15 +167,15 @@ create function last_day (
        --
        -- @return The last day of the month containing somedate
        --
-       timestamp
+       timestamptz
 )
-returns timestamp as '
+returns timestamptz as '
 declare
        last_day__somedate	alias for $1;
        v_month			integer;
        v_targetmonth		integer;
-       v_date			timestamp;
-       v_targetdate		timestamp;
+       v_date			timestamptz;
+       v_targetdate		timestamptz;
 begin
 	
        -- Initial values

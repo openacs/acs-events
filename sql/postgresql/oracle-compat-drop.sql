@@ -8,8 +8,8 @@
 -- $Id$
 
 drop function dow_to_int(varchar);
-drop function next_day(timestamp,varchar);
-drop function add_months(timestamp,integer);
-drop function last_day(timestamp);
+drop function next_day(timestamptz,varchar);
+drop function add_months(timestamptz,integer);
+drop function last_day(timestamptz);
 drop function to_interval(integer,varchar);
 
