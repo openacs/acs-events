@@ -903,7 +903,7 @@ begin
             v_timespan_id,	      -- timespan_id
             event_row.activity_id,    -- activity_id`
             event_row.recurrence_id,  -- recurrence_id
-	    ''acs_event'',	      -- object_type (default)
+	    object_row.object_type,   -- object_type (default)
 	    now(),		      -- creation_date (default)
             object_row.creation_user, -- creation_user
             object_row.creation_ip,   -- creation_ip
