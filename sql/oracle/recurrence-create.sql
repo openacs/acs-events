@@ -190,7 +190,6 @@ as
         return recurrence_id;
     end new;
 
-
     -- Note: this will fail if there are any events_with this recurrence
     procedure delete (
          recurrence_id in recurrences.recurrence_id%TYPE

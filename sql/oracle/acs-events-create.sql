@@ -441,6 +441,12 @@ as
         timespan_id     in timespans.timespan_id%TYPE
     );
 
+    procedure recurrence_timespan_edit (
+        event_id               in acs_events.event_id%TYPE,
+        start_date             in time_intervals.start_date%TYPE,
+        end_date               in time_intervals.end_date%TYPE
+    );
+
     procedure activity_set (
         -- Sets the activity for an event (20.10.20)
         -- @author W. Scott Meeks
@@ -715,6 +721,30 @@ as
         set    timespan_id = timespan_set.timespan_id
         where  event_id    = timespan_set.event_id;
     end timespan_set;
+
+    procedure recurrence_timespan_edit (
+        event_id               in acs_events.event_id%TYPE,
+        start_date             in time_intervals.start_date%TYPE,
+        end_date               in time_intervals.end_date%TYPE
+    )
+    is
+        v_timespan           timespans%ROWTYPE;
+        v_one_start_date     time_intervals.start_date%TYPE;
+        v_one_end_date       time_intervals.end_date%TYPE;
+    begin
+        -- get the initial offsets
+        select start_date, end_date into v_one_start_date, v_one_end_date
+        from time_intervals, timespans, acs_events
+        where time_intervals.interval_id = timespans.interval_id and
+        timespans.timespan_id = acs_events.timespan_id and
+        event_id= recurrence_timespan_edit.event_id;
+
+        for v_timespan in 
+        (select * from time_intervals where interval_id in (select interval_id from timespans where timespan_id in (select timespan_id from acs_events where recurrence_id = (select recurrence_id from acs_events where event_id = recurrence_timespan_edit.event_id))))
+        LOOP
+                time_interval.edit(v_timespan.interval_id, v_timespan.start_date + (start_date - v_one_start_date), v_timespan.end_date + (end_date - v_one_end_date));
+        END LOOP;
+    end recurrence_timespan_edit;
 
     procedure activity_set (
         event_id        in acs_events.event_id%TYPE,
