@@ -437,7 +437,7 @@ create or replace function acs_event__new (
 )
 returns integer as '
 begin
-       return select acs_event__new($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,null);
+       return acs_event__new($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,null);
 end;' language 'plpgsql';
 
 create or replace function acs_event__new (
