@@ -7,7 +7,7 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="0.3d" url="http://www.jsabino.com/acs-repository/download/apm/acs-events-0.2d.apm">
+    <version name="0.3d" url="http://www.jsabino.com/acs-repository/download/apm/acs-events-0.3d.apm">
         <owner url="mailto:smeeks@arsdigita.com">W. Scott Meeks</owner>
         <summary>Supports relationships between intervals in time, activities, and parties.</summary>
         <vendor url="http://www.arsdigita.com/">ArsDigita Corporation</vendor>
