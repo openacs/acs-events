@@ -7,7 +7,7 @@
     <initial-install-p>f</initial-install-p>
     <singleton-p>t</singleton-p>
     
-    <version name="0.4d" url="http://openacs.org/repository/download/apm/acs-events-0.4d.apm">
+    <version name="0.4d2" url="http://openacs.org/repository/download/apm/acs-events-0.4d2.apm">
         <owner url="http://openacs.org">OpenACS</owner>
         <summary>API support for relationships between intervals in time, activities, and parties.</summary>
         <release-date>2003-11-10</release-date>
