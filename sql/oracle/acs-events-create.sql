@@ -334,6 +334,7 @@ as
         event_id        in acs_events.event_id%TYPE default null, 
         name            in acs_events.name%TYPE default null,
         description     in acs_events.description%TYPE default null,
+        html_p          in acs_events.html_p%TYPE default null,
         timespan_id     in acs_events.timespan_id%TYPE default null, 
         activity_id     in acs_events.activity_id%TYPE default null, 
         recurrence_id   in acs_events.recurrence_id%TYPE default null, 
@@ -531,6 +532,7 @@ as
         event_id        in acs_events.event_id%TYPE default null, 
         name            in acs_events.name%TYPE default null,
         description     in acs_events.description%TYPE default null,
+        html_p          in acs_events.html_p%TYPE default null,
         timespan_id     in acs_events.timespan_id%TYPE default null, 
         activity_id     in acs_events.activity_id%TYPE default null, 
         recurrence_id   in acs_events.recurrence_id%TYPE default null, 
@@ -553,9 +555,9 @@ as
         );
                 
         insert into acs_events
-            (event_id, name, description, activity_id, timespan_id, recurrence_id)
+            (event_id, name, description, html_p, activity_id, timespan_id, recurrence_id)
         values
-            (new_event_id, name, description, activity_id, timespan_id, recurrence_id);
+            (new_event_id, name, description, html_p, activity_id, timespan_id, recurrence_id);
 
         return new_event_id;
     end new; 
