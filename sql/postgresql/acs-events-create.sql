@@ -479,7 +479,10 @@ begin
             new__creation_date, -- creation_date
             new__creation_user,	-- creation_user
             new__creation_ip,	-- creation_ip
-            new__context_id	-- context_id
+            new__context_id,	-- context_id
+            ''t'',		-- security_inherit_p
+            new__name,		-- title
+            null		-- package_id
 	    );
                 
        insert into acs_events
