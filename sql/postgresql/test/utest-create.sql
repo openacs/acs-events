@@ -223,8 +223,8 @@ end;' language 'plpgsql';
 
 create function ut_assert__eq (
       varchar,
-      timestamp,
-      timestamp,
+      timestamptz,
+      timestamptz,
       boolean,
       boolean
 )
@@ -255,8 +255,8 @@ end;' language 'plpgsql';
 -- Overload for calls with default values
 create function ut_assert__eq (
       varchar,	-- IN VARCHAR2,
-      timestamp,
-      timestamp
+      timestamptz,
+      timestamptz
 )
 returns integer as '
 declare

@@ -173,7 +173,7 @@ create function acs_activity__new (
        boolean,			 -- in acs_activities.html_p%TYPE     
        text,			 -- in acs_activities.status_summary%TYPE     
        varchar,			 -- in acs_object_types.object_type%TYPE
-       timestamp,		 -- in acs_objects.creation_date%TYPE
+       timestamptz,		 -- in acs_objects.creation_date%TYPE
        integer,			 -- in acs_objects.creation_user%TYPE
        varchar,			 -- in acs_objects.creation_ip%TYPE
        integer			 -- in acs_objects.context_id%TYPE

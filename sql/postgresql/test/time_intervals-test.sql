@@ -67,8 +67,8 @@ end;' language 'plpgsql';
 
 -- We test the creation of a time interval entry
 create function ut__new(
-       timestamp,
-       timestamp
+       timestamptz,
+       timestamptz
 )
 returns integer as '
 declare
@@ -135,8 +135,8 @@ end;' language 'plpgsql';
 
 create function ut__edit (
        integer,		 -- time_intervals.interval_id%TYPE;
-       timestamp,
-       timestamp
+       timestamptz,
+       timestamptz
 )
 returns integer as '
 declare
@@ -209,8 +209,8 @@ create function ut__shift (
        integer,		  -- in time_intervals.interval_id%TYPE;
        integer,
        integer,
-       timestamp,
-       timestamp
+       timestamptz,
+       timestamptz
 )
 returns integer as '
 declare
@@ -268,8 +268,8 @@ end;' language 'plpgsql';
 create function ut__overlaps_p(
        varchar,	
        integer,    -- time_intervals.interval_id%TYPE;
-       timestamp,  -- time_intervals.start_date%TYPE;
-       timestamp,  -- time_intervals.end_date%TYPE;
+       timestamptz, -- time_intervals.start_date%TYPE;
+       timestamptz,  -- time_intervals.end_date%TYPE;
        boolean  
 )
 returns integer as '
@@ -294,10 +294,10 @@ end;' language 'plpgsql';
 
 create function ut__overlaps_p(
        varchar,	
-       timestamp,
-       timestamp,
-       timestamp,  -- time_intervals.start_date%TYPE;
-       timestamp,  -- time_intervals.end_date%TYPE;
+       timestamptz,
+       timestamptz,
+       timestamptz,  -- time_intervals.start_date%TYPE;
+       timestamptz,  -- time_intervals.end_date%TYPE;
        boolean  
 )
 returns integer as '
@@ -372,46 +372,46 @@ begin
 	raise notice ''Regression test, part 1 (creates and edits).'';
 
 	-- We first check if the creation of time intervals work
-	v_interval_id := ut__new(timestamp ''2001-01-01'',timestamp ''2001-01-02'');
+	v_interval_id := ut__new(timestamptz ''2001-01-01'',timestamptz ''2001-01-02'');
 
 	-- Try to edit, putting new values for start date and end dates
-	PERFORM ut__edit(v_interval_id,timestamp ''2001-01-02'',timestamp ''2001-01-30'');
+	PERFORM ut__edit(v_interval_id,timestamptz ''2001-01-02'',timestamptz ''2001-01-30'');
 
 	-- Edit, but this time, change only the start date
-	PERFORM ut__edit(v_interval_id,timestamp ''2001-01-07'',null);
+	PERFORM ut__edit(v_interval_id,timestamptz ''2001-01-07'',null);
 
 	-- Edit, but this time, change only the end date
-	PERFORM ut__edit(v_interval_id,null,timestamp ''2001-01-08'');
+	PERFORM ut__edit(v_interval_id,null,timestamptz ''2001-01-08'');
 
 	-- We now test equality of (identical) intervals
 	PERFORM ut__eq(''Equal (same) intervals'',v_interval_id,v_interval_id,true);
 
 	-- Create another interval for comparison
-	v_interval_id_ck := ut__new(timestamp ''2001-01-07'',timestamp ''2001-01-08'');
+	v_interval_id_ck := ut__new(timestamptz ''2001-01-07'',timestamptz ''2001-01-08'');
 
 	-- We now test equality of (nonidentical) intervals
 	PERFORM ut__eq(''Equal (distinct) intervals'',v_interval_id,v_interval_id_ck,true);
 
 	-- Shift the second interval start date by one day, the end date by two days
-	PERFORM ut__shift(v_interval_id_ck,1,2,timestamp ''2001-01-08'', timestamp ''2001-01-10'');
+	PERFORM ut__shift(v_interval_id_ck,1,2,timestamptz ''2001-01-08'', timestamptz ''2001-01-10'');
 
 	-- Now test inequality of time intervals
 	PERFORM ut__eq(''Unequal (distinct) intervals'',v_interval_id,v_interval_id_ck,false);
 
 	-- Shift the second interval start date BACK by one day, the end date same
-	PERFORM ut__shift(v_interval_id_ck,-1,0,timestamp ''2001-01-07'', timestamp ''2001-01-10'');
+	PERFORM ut__shift(v_interval_id_ck,-1,0,timestamptz ''2001-01-07'', timestamptz ''2001-01-10'');
 
 	-- Now test inequality of time intervals
 	PERFORM ut__eq(''Unequal (distinct) intervals: start date equal'',v_interval_id,v_interval_id_ck,false);
 
 	-- Shift the second interval, start date same, but the end date BACK by two days
-	PERFORM ut__shift(v_interval_id_ck,0,-2,timestamp ''2001-01-07'', timestamp ''2001-01-08'');
+	PERFORM ut__shift(v_interval_id_ck,0,-2,timestamptz ''2001-01-07'', timestamptz ''2001-01-08'');
 
 	-- Should be equal again
 	PERFORM ut__eq(''Equal again, (distinct) intervals'',v_interval_id,v_interval_id_ck,true);
 
 	-- For fun, shift start date BACK by two days, the end date BACK by 1 day
-	PERFORM ut__shift(v_interval_id_ck,-2,-1,timestamp ''2001-01-05'', timestamp ''2001-01-07'');
+	PERFORM ut__shift(v_interval_id_ck,-2,-1,timestamptz ''2001-01-05'', timestamptz ''2001-01-07'');
 
 	-- Should be unequal again
 	PERFORM ut__eq(''For fun, unequal (distinct) intervals'',v_interval_id,v_interval_id_ck,false);
@@ -422,7 +422,7 @@ begin
 	PERFORM ut__overlaps_p(''Overlapping intervals'',v_interval_id,v_interval_id_ck,true);
 
 	-- Ok, shift the dtart and end dates by one so that intervals do not overlap
-	PERFORM ut__shift(v_interval_id_ck,-1,-1,timestamp ''2001-01-04'', timestamp ''2001-01-06'');
+	PERFORM ut__shift(v_interval_id_ck,-1,-1,timestamptz ''2001-01-04'', timestamptz ''2001-01-06'');
 
 	-- They should not overlap now.
 	PERFORM ut__overlaps_p(''Non-overlapping intervals'',v_interval_id,v_interval_id_ck,false);
@@ -432,28 +432,28 @@ begin
 	-- Note that we are comparing with 2001-01-07 through 2001-01-08
 	PERFORM ut__overlaps_p(''Overlapping intervals'',
 			       v_interval_id,
-			       timestamp ''2001-01-06'',
-			       timestamp ''2001-01-09'',
+			       timestamptz ''2001-01-06'',
+			       timestamptz ''2001-01-09'',
 			       true);	
 
 	-- How about an interval next month?
 	PERFORM ut__overlaps_p(''Non-overlapping intervals'',
 			       v_interval_id,
-			       timestamp ''2001-02-06'',
-			       timestamp ''2001-02-09'',
+			       timestamptz ''2001-02-06'',
+			       timestamptz ''2001-02-09'',
 			       false);	
 
 	-- Try a null starting interval
 	PERFORM ut__overlaps_p(''Overlapping intervals (null start)'',
 			       v_interval_id,
 			       null,
-			       timestamp ''2001-01-09'',
+			       timestamptz ''2001-01-09'',
 			       true);	
 
 	-- Try a null starting interval
 	PERFORM ut__overlaps_p(''Overlapping intervals (null end)'',
 			       v_interval_id,
-			       timestamp ''2001-01-06'',
+			       timestamptz ''2001-01-06'',
 			       null,
 			       true);	
 
@@ -461,55 +461,55 @@ begin
 	-- By definition, any interval should be non-overlapping with a non-existent interval
 	PERFORM ut__overlaps_p(''Non-overlapping intervals (non-allowed interval, outside month)'',
 			       v_interval_id,
-			       timestamp ''2001-02-09'',
-			       timestamp ''2001-02-06'',
+			       timestamptz ''2001-02-09'',
+			       timestamptz ''2001-02-06'',
 			       false);				     
 
 	-- What if the interval is not an allowable interval?
 	-- By definition, any interval should be non-overlapping with a non-existent interval
 	PERFORM ut__overlaps_p(''Non-overlapping intervals (non-allowed interval, in month)'',
 			       v_interval_id,
-			       timestamp ''2001-01-09'',
-			       timestamp ''2001-01-06'',
+			       timestamptz ''2001-01-09'',
+			       timestamptz ''2001-01-06'',
 			       false);				     
 
 	-- Yet another overloaded definition
 	PERFORM ut__overlaps_p(''Overlapping intervals (not in time_intervals)'',
-			       timestamp ''2001-01-06'',
-			       timestamp ''2001-01-09'',
-			       timestamp ''2001-01-07'',
-			       timestamp ''2001-01-08'',
+			       timestamptz ''2001-01-06'',
+			       timestamptz ''2001-01-09'',
+			       timestamptz ''2001-01-07'',
+			       timestamptz ''2001-01-08'',
 			       true);				     
 
 
 	-- Yet another overloaded definition
 	PERFORM ut__overlaps_p(''Overlapping intervals (not in time_intervals)'',
-			       timestamp ''2001-01-06'',
-			       timestamp ''2001-01-09'',
-			       timestamp ''2001-01-09'',
-			       timestamp ''2001-01-10'',
+			       timestamptz ''2001-01-06'',
+			       timestamptz ''2001-01-09'',
+			       timestamptz ''2001-01-09'',
+			       timestamptz ''2001-01-10'',
 			       true);				     
 
 	-- Yet another overloaded definition
 	PERFORM ut__overlaps_p(''Overlapping intervals (not in time_intervals)'',
-			       timestamp ''2001-01-06'',
-			       timestamp ''2001-01-09'',
+			       timestamptz ''2001-01-06'',
+			       timestamptz ''2001-01-09'',
 			       null,
-			       timestamp ''2001-01-10'',
+			       timestamptz ''2001-01-10'',
 			       true);				     
 	PERFORM ut__overlaps_p(''Overlapping intervals (not in time_intervals)'',
-			       timestamp ''2001-01-06'',
-			       timestamp ''2001-01-09'',
-			       timestamp ''2001-01-10'',
+			       timestamptz ''2001-01-06'',
+			       timestamptz ''2001-01-09'',
+			       timestamptz ''2001-01-10'',
 			       null,
 			       false);				     
 
 	-- Yet another overloaded definition
 	PERFORM ut__overlaps_p(''Non-overlapping intervals (not in time_intervals)'',
-			       timestamp ''2001-02-06'',
-			       timestamp ''2001-02-09'',
-			       timestamp ''2001-01-07'',
-			       timestamp ''2001-01-08'',
+			       timestamptz ''2001-02-06'',
+			       timestamptz ''2001-02-09'',
+			       timestamptz ''2001-01-07'',
+			       timestamptz ''2001-01-08'',
 			       false);				     
 
 

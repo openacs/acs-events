@@ -117,8 +117,8 @@ end;' language 'plpgsql';
 
 -- We test the creation of a time interval entry
 create function ut__new(
-       timestamp,
-       timestamp
+       timestamptz,
+       timestamptz
 )
 returns integer as '
 declare
@@ -261,8 +261,8 @@ end;' language 'plpgsql';
 
 create function ut__join(
        integer,    -- timespans.timespan_id%TYPE;
-       timestamp,  -- time_intervals.start_date%TYPE;
-       timestamp  -- time_intervals.end_date%TYPE;
+       timestamptz,  -- time_intervals.start_date%TYPE;
+       timestamptz  -- time_intervals.end_date%TYPE;
 )
 returns integer as '
 declare
@@ -404,8 +404,8 @@ end;' language 'plpgsql';
 
 create function ut__overlaps_p(
        integer,		-- timespans.timespan_id%TYPE;
-       timestamp,	-- time_intervals.start_date%TYPE;
-       timestamp,	-- time_intervals.end_date%TYPE;
+       timestamptz,	-- time_intervals.start_date%TYPE;
+       timestamptz,	-- time_intervals.end_date%TYPE;
        boolean
 )
 returns integer as '
@@ -462,14 +462,14 @@ begin
 	raise notice ''Regression test, part 1 (creates and edits).'';
 
 	-- First create an interval
-	v_interval_id := time_interval__new(timestamp ''2001-01-01'',timestamp ''2001-01-20'');
+	v_interval_id := time_interval__new(timestamptz ''2001-01-01'',timestamptz ''2001-01-20'');
 
 	--Check if creation of timespans work by supplying an interval id to be copied
 	PERFORM ut__new(v_interval_id);
 
 	-- We first check if the creation of timespans work
 	-- This should be equivalent to what we have above
-	v_timespan_id := ut__new(timestamp ''2001-01-25'',timestamp ''2001-02-02'');
+	v_timespan_id := ut__new(timestamptz ''2001-01-25'',timestamptz ''2001-02-02'');
 
 	-- Test if timespan exists
 	PERFORM ut__exists_p(v_timespan_id,true);
@@ -494,20 +494,20 @@ begin
 	PERFORM ut__overlaps_interval_p(v_timespan_id,v_interval_id,true);
 
 	-- A new timespans
-	v_timespan_id := ut__new(timestamp ''2001-03-05'',timestamp ''2001-03-31'');
-	v_timespan_id_ck := ut__new(timestamp ''2001-06-05'',timestamp ''2001-06-30'');
+	v_timespan_id := ut__new(timestamptz ''2001-03-05'',timestamptz ''2001-03-31'');
+	v_timespan_id_ck := ut__new(timestamptz ''2001-06-05'',timestamptz ''2001-06-30'');
 
 	-- These timespans should not overlap
 	PERFORM ut__overlaps_p(v_timespan_id,v_timespan_id_ck,false);
 
 	-- Check overlaps against these known dates
-	PERFORM ut__overlaps_p(v_timespan_id,timestamp ''2001-02-06'',timestamp ''2001-03-25'',true);
-	PERFORM ut__overlaps_p(v_timespan_id,timestamp ''2001-03-07'',timestamp ''2001-04-01'',true);
-	PERFORM ut__overlaps_p(v_timespan_id,timestamp ''2001-01-01'',timestamp ''2001-03-20'',true);
-	PERFORM ut__overlaps_p(v_timespan_id,timestamp ''2001-01-01'',null,true);
-	PERFORM ut__overlaps_p(v_timespan_id,null,timestamp ''2001-04-01'',true);
-	PERFORM ut__overlaps_p(v_timespan_id,timestamp ''2001-04-01'',timestamp ''2001-04-30'',false);
-	PERFORM ut__overlaps_p(v_timespan_id,timestamp ''2001-02-01'',timestamp ''2001-02-27'',false);
+	PERFORM ut__overlaps_p(v_timespan_id,timestamptz ''2001-02-06'',timestamptz ''2001-03-25'',true);
+	PERFORM ut__overlaps_p(v_timespan_id,timestamptz ''2001-03-07'',timestamptz ''2001-04-01'',true);
+	PERFORM ut__overlaps_p(v_timespan_id,timestamptz ''2001-01-01'',timestamptz ''2001-03-20'',true);
+	PERFORM ut__overlaps_p(v_timespan_id,timestamptz ''2001-01-01'',null,true);
+	PERFORM ut__overlaps_p(v_timespan_id,null,timestamptz ''2001-04-01'',true);
+	PERFORM ut__overlaps_p(v_timespan_id,timestamptz ''2001-04-01'',timestamptz ''2001-04-30'',false);
+	PERFORM ut__overlaps_p(v_timespan_id,timestamptz ''2001-02-01'',timestamptz ''2001-02-27'',false);
 
 
 	-- Join the first interval with the second, making a copy
@@ -520,7 +520,7 @@ begin
 	PERFORM ut__overlaps_p(v_timespan_id,v_timespan_id_ck,true);
 
 	-- Join an interval instead
-	PERFORM ut__join(v_timespan_id_ck,timestamp ''2001-12-01'',timestamp ''2001-12-31'');
+	PERFORM ut__join(v_timespan_id_ck,timestamptz ''2001-12-01'',timestamptz ''2001-12-31'');
 
 	-- Copy a timespan (will only contain two)
 	PERFORM ut__copy(v_timespan_id,interval ''0 days'');
