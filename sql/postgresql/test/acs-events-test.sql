@@ -60,8 +60,8 @@ begin
 end;' language 'plpgsql';
 
 -- This is an example of a simple custom recurrence function: recur every three days
-create function recur_every3(timestamp with time zone,integer)
-returns timestamp as '
+create function recur_every3(timestamptz,integer)
+returns timestamptz as '
 declare
 	recur_every3__date	alias for $1;
 	recur_every3__interval	alias for $2;
@@ -79,8 +79,8 @@ end;' language 'plpgsql';
 create function ut__insert_instances()
 returns integer as '
 declare
-	date1						timestamp := ''2000-03-23 13:00'';
-	date2						timestamp := ''2000-03-23 14:00'';
+	date1						timestamptz := ''2000-03-23 13:00'';
+	date2						timestamptz := ''2000-03-23 14:00'';
 	insert_instances__timespan_id			acs_events.timespan_id%TYPE;
 	insert_instances__activity_id			acs_events.activity_id%TYPE;
 	insert_instances__recurrence_id			acs_events.recurrence_id%TYPE;
@@ -281,7 +281,7 @@ begin
 
 	-- Insert instances
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2000-06-02''
+					    timestamptz ''2000-06-02''
 					    );
 
 	-- Test for instances
@@ -340,8 +340,8 @@ begin
 
 
 	-- Another test of weekly recurrence
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-10-21 09:00:00'',
-						       timestamp ''2001-10-23 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-10-21 09:00:00'',
+						       timestamptz ''2001-10-23 10:00:00'');
 
 	-- Check month by date (recur for the same date of the month specified in time interval)
 	insert_instances__recurrence_id := recurrence__new(''week'',
@@ -360,7 +360,7 @@ begin
 	
 
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2001-12-25''
+					    timestamptz ''2001-12-25''
 					    );
 
 	-- There should be 13 instances of the weekly event
@@ -386,8 +386,8 @@ begin
 
 	
 	-- Test month_by_date recurrence
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-03-21 09:00:00'',
-						       timestamp ''2001-03-23 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-03-21 09:00:00'',
+						       timestamptz ''2001-03-23 10:00:00'');
 
 	-- Check month by date (recur for the same date of the month specified in time interval)
 	insert_instances__recurrence_id := recurrence__new(''month_by_date'',
@@ -406,7 +406,7 @@ begin
 	
 
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2001-04-25 00:00:00''
+					    timestamptz ''2001-04-25 00:00:00''
 					    );
 
 	-- There should be two instances (including the original), even if the cut-off date is between
@@ -430,8 +430,8 @@ begin
 	end loop;
 
 	-- Test month_by_date recurrence
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-10-21 09:00:00'',
-						       timestamp ''2001-10-23 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-10-21 09:00:00'',
+						       timestamptz ''2001-10-23 10:00:00'');
 
 	-- Check month by date (recur for the same date of the month specified in time interval)
 	insert_instances__recurrence_id := recurrence__new(''month_by_date'',
@@ -450,7 +450,7 @@ begin
 	
 
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2002-04-25 00:00:00''
+					    timestamptz ''2002-04-25 00:00:00''
 					    );
 
 	-- There should be four instances (including the original), even if the cut-off date is between
@@ -480,8 +480,8 @@ begin
 
 	-- Check another recurrence type (daily recurrence)
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-03-26 09:00:00'',
-						       timestamp ''2001-03-26 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-03-26 09:00:00'',
+						       timestamptz ''2001-03-26 10:00:00'');
 
 	-- Check month by date (recur every day, skip every second interval)
 	insert_instances__recurrence_id := recurrence__new(''day'',
@@ -501,7 +501,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2001-04-05 00:00:00''
+					    timestamptz ''2001-04-05 00:00:00''
 					    );
 
 	-- There should be six instances (including the original)
@@ -530,8 +530,8 @@ begin
 
 	-- Check another recurrence type (daily recurrence)
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-10-26 09:00:00'',
-						       timestamp ''2001-10-26 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-10-26 09:00:00'',
+						       timestamptz ''2001-10-26 10:00:00'');
 
 	-- Check month by date (recur every day, skip every second interval)
 	insert_instances__recurrence_id := recurrence__new(''day'',
@@ -551,7 +551,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2001-11-05 00:00:00''
+					    timestamptz ''2001-11-05 00:00:00''
 					    );
 
 	-- There should be five instances (including the original)
@@ -580,8 +580,8 @@ begin
 
 	-- Check another recurrence type (same date every year)
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-04-01 09:00:00'',
-						       timestamp ''2001-04-01 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-04-01 09:00:00'',
+						       timestamptz ''2001-04-01 10:00:00'');
 
 	-- Check month by date (recur every day, skip every second interval)
 	insert_instances__recurrence_id := recurrence__new(''year'',
@@ -601,7 +601,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2002-04-05 00:00:00''
+					    timestamptz ''2002-04-05 00:00:00''
 					    );
 
 	-- There should be two instance (including the original).
@@ -623,8 +623,8 @@ begin
 
 	-- Check another recurrence type (same date every year)
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-04-03 09:00:00'',
-						       timestamp ''2001-04-03 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-04-03 09:00:00'',
+						       timestamptz ''2001-04-03 10:00:00'');
 
 	-- Check month by date (recur every day, skip every second interval)
 	insert_instances__recurrence_id := recurrence__new(''year'',
@@ -644,7 +644,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2002-04-05 00:00:00''
+					    timestamptz ''2002-04-05 00:00:00''
 					    );
 
 	-- There should be two instance (including the original).
@@ -667,8 +667,8 @@ begin
 
 	-- Check another recurrence type (same date every year)
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-10-28 09:00:00'',
-						       timestamp ''2001-10-28 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-10-28 09:00:00'',
+						       timestamptz ''2001-10-28 10:00:00'');
 
 	-- Check month by date (recur every day, skip every second interval)
 	insert_instances__recurrence_id := recurrence__new(''year'',
@@ -688,7 +688,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2002-10-30 00:00:00''
+					    timestamptz ''2002-10-30 00:00:00''
 					    );
 
 	-- There should be two instance (including the original).
@@ -710,8 +710,8 @@ begin
 
 
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-02-06 09:00:00'',
-						       timestamp ''2001-02-07 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-02-06 09:00:00'',
+						       timestamptz ''2001-02-07 10:00:00'');
 
 	insert_instances__recurrence_id := recurrence__new(''last_of_month'',
 						           1,
@@ -730,7 +730,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2001-12-10 00:00:00''
+					    timestamptz ''2001-12-10 00:00:00''
 					    );
 
 	-- There should be three instances (including the original).
@@ -756,8 +756,8 @@ begin
 
 
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-08-06 09:00:00'',
-						       timestamp ''2001-08-07 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-08-06 09:00:00'',
+						       timestamptz ''2001-08-07 10:00:00'');
 
 	insert_instances__recurrence_id := recurrence__new(''last_of_month'',
 						           1,
@@ -776,7 +776,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2002-05-20 00:00:00''
+					    timestamptz ''2002-05-20 00:00:00''
 					    );
 
 	-- There should be three instances (including the original).
@@ -802,8 +802,8 @@ begin
 
 	----------------------------------------------------------------------------------------------------------
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-08-06 09:00:00'',
-						       timestamp ''2001-08-07 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-08-06 09:00:00'',
+						       timestamptz ''2001-08-07 10:00:00'');
 
 	insert_instances__recurrence_id := recurrence__new(''custom'',
 						           1,
@@ -822,7 +822,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2001-08-30 00:00:00''
+					    timestamptz ''2001-08-30 00:00:00''
 					    );
 
 	-- There should be three instances (including the original).
@@ -849,8 +849,8 @@ begin
 	----------------------------------------------------------------------------------------------------------
 
 	-- First, we need a new timespan,recurrence  and activity
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-02-06 09:00:00'',
-						       timestamp ''2001-02-07 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-02-06 09:00:00'',
+						       timestamptz ''2001-02-07 10:00:00'');
 
 	insert_instances__recurrence_id := recurrence__new(''month_by_day'',
 						           1,
@@ -869,7 +869,7 @@ begin
 	
 	-- Cut-off date should have no effect
 	PERFORM acs_event__insert_instances (insert_instances__event_id,
-					    timestamp ''2001-12-20 00:00:00''
+					    timestamptz ''2001-12-20 00:00:00''
 					    );
 
 	-- There should be three instances (including the original).
@@ -914,8 +914,8 @@ begin
 	----------------------------------------------------------------------------------------------------------
 
 	-- Timespan to shift
-	insert_instances__timespan_id := timespan__new(timestamp ''2001-02-06 09:00:00'',
-						       timestamp ''2001-02-07 10:00:00'');
+	insert_instances__timespan_id := timespan__new(timestamptz ''2001-02-06 09:00:00'',
+						       timestamptz ''2001-02-07 10:00:00'');
 
 
 	-- Insert one recurrence so that recurrence__delete will have something to delete (since recurrences
