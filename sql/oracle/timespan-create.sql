@@ -40,6 +40,8 @@ create table time_intervals (
     check(start_date <= end_date)
 );
 
+create index time_intervals_start_idx on time_intervals(start_date);
+
 comment on table time_intervals is '
     A time interval is represented by two points in time.
 ';      
