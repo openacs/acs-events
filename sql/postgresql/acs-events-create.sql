@@ -419,13 +419,33 @@ comment on view partially_populated_events is '
 --     recurs_p     ()
 
 
-
+-- backwards compatible 13 param version
 create or replace function acs_event__new ( 
+       integer,
+       varchar,
+       text,
+       boolean,
+       text,
+       integer,
+       integer,
+       integer,
+       varchar,
+       timestamptz,
+       integer,
+       varchar,
+       integer
+)
+returns integer as '
+begin
+       return select acs_event__new($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,null);
+end;' language 'plpgsql';
+
+create or replace function acs_event__new (
        --
        -- Creates a new event (20.10.10)
        --
        -- @author W. Scott Meeks
-       -- 
+       --
        -- @param event_id          id to use for new event
        -- @param name              Name of the new event
        -- @param description       Description of the new event
@@ -454,7 +474,8 @@ create or replace function acs_event__new (
        timestamptz,	-- acs_objects.creation_date%TYPE,    
        integer,		-- acs_objects.creation_user%TYPE,    
        varchar,		-- acs_objects.creation_ip%TYPE,	     
-       integer		-- acs_objects.context_id%TYPE,	     
+       integer,		-- acs_objects.context_id%TYPE,	     
+       integer		-- acs_objects.package_id%TYPE,	     
 )
 returns integer as '	-- acs_events.event_id%TYPE
 declare
@@ -471,6 +492,7 @@ declare
        new__creation_user   alias for $11;  -- default null, 
        new__creation_ip     alias for $12; -- default null, 
        new__context_id      alias for $13; -- default null 
+       new__package_id      alias for $14; -- default null 
        v_event_id	    acs_events.event_id%TYPE;
 begin
        v_event_id := acs_object__new(
@@ -482,9 +504,9 @@ begin
             new__context_id,	-- context_id
             ''t'',		-- security_inherit_p
             new__name,		-- title
-            null		-- package_id
+            new__package_id	-- package_id
 	    );
-                
+
        insert into acs_events
             (event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id)
        values
@@ -558,7 +580,7 @@ begin
                 PERFORM acs_event__delete(rec_event.event_id);
             end loop;
        end if;
-	
+
        return 0;
 
 end;' language 'plpgsql';
@@ -1018,7 +1040,8 @@ begin
 	    now(),		      -- creation_date (default)
             object_row.creation_user, -- creation_user
             object_row.creation_ip,   -- creation_ip
-            object_row.context_id     -- context_id
+            object_row.context_id,     -- context_id
+            object_row.package_id     -- context_id
 	    );
 
       return v_event_id;
