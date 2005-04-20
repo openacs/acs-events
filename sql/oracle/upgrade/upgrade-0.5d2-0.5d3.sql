@@ -261,7 +261,7 @@ as
             creation_user => creation_user,
             creation_ip => creation_ip,
             context_id => context_id,
-            package_id => pacakge_id
+            package_id => package_id
         );
 
         insert into acs_events
