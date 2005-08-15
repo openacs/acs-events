@@ -1115,6 +1115,8 @@ declare
        v_days_index		       integer;
        v_day_num		       integer;
        rec_execute		       record;
+       v_new_current_date              timestamptz;
+       v_offset_notice interval;
 begin
 
 	-- Get event parameters
@@ -1213,7 +1215,7 @@ begin
                 -- Find last day of correct month
                 v_last_day := last_day(add_months(v_current_date, v_n_intervals));
                 -- Back up one week and find correct day of week
-                v_current_date := next_day(v_last_day - to_interval(7,''days''), to_char(v_current_date, ''DAY''));
+                v_current_date := next_day(v_last_day ::timestamp - to_interval(7,''days'') :: timestamptz, to_char(v_current_date, ''DAY''));
 	    end if;
 
 	    -- Add a full year (12 months)
@@ -1246,8 +1248,8 @@ begin
                 v_week_date  := v_current_date;
                 while v_days_index <= v_days_length loop
                     v_day_num   := SUBSTR(v_days_of_week, v_days_index, 1);
-                    v_week_date := v_current_date + to_interval(v_day_num,''days'');
-                    if date_trunc(''day'',v_week_date) > date_trunc(''day'',v_start_date) 
+                    v_week_date := (v_current_date ::timestamp + to_interval(v_day_num,''days'')) :: timestamptz;
+	           if date_trunc(''day'',v_week_date) > date_trunc(''day'',v_start_date) 
 		       and date_trunc(''day'',v_week_date) <= date_trunc(''day'',v_stop_date) then
                          -- This is where we add the event
                          v_event_id := acs_event__new_instance(
@@ -1269,13 +1271,13 @@ begin
                  end loop;
 
                  -- Now move to next week with repeats.
-                v_current_date := v_current_date + to_interval(7 * v_n_intervals,''days'');
+                v_current_date := (v_current_date :: timestamp + to_interval(7 * v_n_intervals,''days'')) :: timestamptz;
             else
                 -- All other interval types
                 -- This is where we add the event
                 v_event_id := acs_event__new_instance(
                     insert_instances__event_id,						    -- event_id 
-                    date_trunc(''day'',v_current_date) - date_trunc(''day'',v_event_date)   -- offset
+                    date_trunc(''day'',v_current_date ::timestamp) - date_trunc(''day'',v_event_date ::timestamp)   -- offset
                 );
                 v_last_date_done := v_current_date;
             end if;
