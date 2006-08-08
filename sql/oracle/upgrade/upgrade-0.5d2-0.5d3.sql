@@ -529,7 +529,7 @@ as
             recurrence_id => event.recurrence_id,
             creation_user => object.creation_user,
             creation_ip   => object.creation_ip,
-            context_id    => object.context_id
+            context_id    => object.context_id,
             package_id    => object.package_id
         );
 
