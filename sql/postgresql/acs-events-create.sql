@@ -763,7 +763,6 @@ begin
 
 end;' language 'plpgsql';
 
-
 create or replace function acs_event__recurrence_timespan_edit (
        integer,
        timestamptz,
@@ -773,6 +772,25 @@ DECLARE
         p_event_id                      alias for $1;
         p_start_date                    alias for $2;
         p_end_date                      alias for $3;
+BEGIN
+    return acs_event__recurrence_timespan_edit (
+           p_event_id,
+           p_start_date,
+           p_end_date,
+           ''t'');
+END;' language 'plpgsql';
+
+create or replace function acs_event__recurrence_timespan_edit (
+       integer,
+       timestamptz,
+       timestamptz,
+       boolean
+) returns integer as '
+DECLARE
+        p_event_id                      alias for $1;
+        p_start_date                    alias for $2;
+        p_end_date                      alias for $3;
+        p_edit_past_events_p            alias for $4;
         v_timespan                   RECORD;
         v_one_start_date             timestamptz;
         v_one_end_date               timestamptz;
@@ -787,7 +805,6 @@ BEGIN
         where time_intervals.interval_id = timespans.interval_id
           and timespans.timespan_id = acs_events.timespan_id
           and event_id=p_event_id;
-
         FOR v_timespan in
             select *
             from time_intervals
@@ -797,6 +814,7 @@ BEGIN
                                                         from acs_events 
                                                         where recurrence_id = (select recurrence_id 
                                                                                from acs_events where event_id = p_event_id)))
+           and (p_edit_past_events_p = ''t'' or start_date >= p_start_date)
         LOOP
                 PERFORM time_interval__edit(v_timespan.interval_id, 
                                             v_timespan.start_date + (p_start_date - v_one_start_date), 
