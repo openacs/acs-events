@@ -747,7 +747,7 @@ as
 
         for v_timespan in 
         (select * from time_intervals where interval_id in (select interval_id from timespans where timespan_id in (select timespan_id from acs_events where recurrence_id = (select recurrence_id from acs_events where event_id = recurrence_timespan_edit.event_id)))
-        and (edit_past_events = 't' or start_date >= to_date(recurrence_timespan_edit.start_date,'YYYY-MM-DD HH24:MI:SS') ))
+        and (edit_past_events = 't' or start_date >= to_date(v_one_start_date,'YYYY-MM-DD HH24:MI:SS') ))
         LOOP
                 time_interval.edit(v_timespan.interval_id, v_timespan.start_date + (start_date - v_one_start_date), v_timespan.end_date + (end_date - v_one_end_date));
         END LOOP;

@@ -805,6 +805,7 @@ BEGIN
         where time_intervals.interval_id = timespans.interval_id
           and timespans.timespan_id = acs_events.timespan_id
           and event_id=p_event_id;
+raise notice ''v_one_start_date = %'',v_one_start_date;
         FOR v_timespan in
             select *
             from time_intervals
@@ -814,7 +815,7 @@ BEGIN
                                                         from acs_events 
                                                         where recurrence_id = (select recurrence_id 
                                                                                from acs_events where event_id = p_event_id)))
-           and (p_edit_past_events_p = ''t'' or start_date >= p_start_date)
+           and (p_edit_past_events_p = ''t'' or start_date >= v_one_start_date)
         LOOP
                 PERFORM time_interval__edit(v_timespan.interval_id, 
                                             v_timespan.start_date + (p_start_date - v_one_start_date), 
