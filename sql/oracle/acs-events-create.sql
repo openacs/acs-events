@@ -16,7 +16,7 @@ create sequence acs_events_seq start with 1;
 -- The event object
 begin
     acs_object_type.create_type ( 
-        supertype     =>g 'acs_object', 
+        supertype     => 'acs_object', 
         object_type   => 'acs_event', 
         pretty_name   => 'ACS Event', 
         pretty_plural => 'ACS Events', 
