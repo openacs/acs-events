@@ -1273,7 +1273,7 @@ begin
                          -- This is where we add the event
                          v_event_id := acs_event__new_instance(
                               insert_instances__event_id,					   -- event_id
-                              date_trunc(''day'',v_week_date) - date_trunc(''day'',v_event_date)    -- offset
+                              date_trunc(''day'',v_week_date :: timestamp) - date_trunc(''day'',v_event_date :: timestamp)    -- offset
                          );
                          v_last_date_done := v_week_date;
 
