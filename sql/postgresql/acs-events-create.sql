@@ -818,8 +818,8 @@ raise notice ''v_one_start_date = %'',v_one_start_date;
            and (p_edit_past_events_p = ''t'' or start_date >= v_one_start_date)
         LOOP
                 PERFORM time_interval__edit(v_timespan.interval_id, 
-                                            v_timespan.start_date + (p_start_date - v_one_start_date), 
-                                            v_timespan.end_date + (p_end_date - v_one_end_date));
+                                            (to_char(v_timespan.start_date,''yyyy-mm-dd'') || '' '' || to_char(p_start_date,''hh24:mi:ss'')) :: timestamptz, 
+                                            (to_char(v_timespan.end_date,''yyyy-mm-dd'') || '' '' || to_char(p_end_date,''hh24:mi:ss'')) :: timestamptz);
         END LOOP;
 
         return p_event_id;
