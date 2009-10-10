@@ -16,7 +16,7 @@
         <maturity>0</maturity>
 
         <provides url="acs-events" version="0.6d3"/>
-        <requires url="acs-kernel" version="5.4.0"/>
+        <requires url="acs-kernel" version="5.5.0"/>
 
         <callbacks>
         </callbacks>
