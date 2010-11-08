@@ -14,8 +14,6 @@ drop table   acs_event_party_map;
 drop index   acs_events_recurrence_id_idx;
 drop table   acs_events;
 
-drop sequence acs_events_sequence;
-drop view acs_events_seq;
 
 \i recurrence-drop.sql
 \i timespan-drop.sql

@@ -14,4 +14,3 @@ select drop_package('time_interval');
 drop table   time_intervals;
 
 drop sequence timespan_sequence;
-drop view timespan_seq;

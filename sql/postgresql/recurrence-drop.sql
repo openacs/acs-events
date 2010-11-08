@@ -11,4 +11,4 @@ drop table recurrences;
 drop table recurrence_interval_types;
 
 drop sequence recurrence_sequence;
-drop view recurrence_seq;
+
