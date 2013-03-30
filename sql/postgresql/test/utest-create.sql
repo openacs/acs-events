@@ -34,46 +34,55 @@
 -- JS: Ported/copied shamelessly from the utplsql package.  
 -- JS: This package is grossly incomplete, but quite useful (for me, anyways). 
 
-create function ut_assert__expected (
-      varchar,	-- IN VARCHAR,
-      varchar,	-- IN VARCHAR,
-      varchar	-- IN VARCHAR
-)
-returns varchar as '
-declare
-      expected__msg		alias for $1;
-      expected__check_this	alias for $2;
-      expected__against_this	alias for $3;
-begin
+
+
+-- added
+select define_function_args('ut_assert__expected','msg,check_this,against_this');
+
+--
+-- procedure ut_assert__expected/3
+--
+CREATE OR REPLACE FUNCTION ut_assert__expected(
+   expected__msg varchar,
+   expected__check_this varchar,
+   expected__against_this varchar
+) RETURNS varchar AS $$
+DECLARE
+BEGIN
 
       return expected__msg || 
-	     '': expected '' ||
-	     '''''''' ||
+	     ': expected ' ||
+	     '''' ||
 	     expected__against_this ||
-	     '''''''' ||
-	     '', got '' || 
-	     '''''''' ||
+	     '''' ||
+	     ', got ' || 
+	     '''' ||
 	     expected__check_this ||
-	     '''''''';
+	     '''';
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
-create function ut_assert__this (
-      varchar,	-- IN VARCHAR,
-      boolean,	-- IN BOOLEAN,
-      boolean,	-- IN BOOLEAN default false,
-      boolean	-- IN BOOLEAN default false
-)
-returns integer as '
-declare
-      this__msg		   alias for $1;
-      this__check_this     alias for $2;
-      this__null_ok	   alias for $3; -- default FALSE
-      this__raise_exc      alias for $4; -- default FALSE
-begin
+
+
+-- added
+select define_function_args('ut_assert__this','msg,check_this,null_ok;FALSE,raise_exc;FALSE');
+
+--
+-- procedure ut_assert__this/4
+--
+CREATE OR REPLACE FUNCTION ut_assert__this(
+   this__msg varchar,
+   this__check_this boolean,
+   this__null_ok boolean,  -- default FALSE
+   this__raise_exc boolean -- default FALSE
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
       -- We always output the message (usually the result of the test)
-      raise notice ''%'',this__msg;
+      raise notice '%',this__msg;
 
       if not this__check_this
          or ( this__check_this is null
@@ -84,9 +93,9 @@ begin
          if this__raise_exc
          then
 	    -- We should make the message more informative.
-            raise exception ''FAILURE''; 
+            raise exception 'FAILURE'; 
 	 else
-	    raise notice ''FAILURE, but forced to continue.'';
+	    raise notice 'FAILURE, but forced to continue.';
          end if;
 
       end if;
@@ -94,38 +103,44 @@ begin
       -- Continue if success;
       return 0;
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__this (
-      varchar,	-- IN VARCHAR,
-      boolean	-- IN BOOLEAN,
-)
-returns integer as '
-declare
-      this__msg		   alias for $1;
-      this__check_this     alias for $2;
-begin
 
-      return ut_assert__this(this_msg,this_check_this,''f'',''f'');
+
+--
+-- procedure ut_assert__this/2
+--
+CREATE OR REPLACE FUNCTION ut_assert__this(
+   this__msg varchar,
+   this__check_this boolean
+) RETURNS integer AS $$
+DECLARE
+BEGIN
+
+      return ut_assert__this(this_msg,this_check_this,'f','f');
      
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
-create function ut_assert__eq (
-      varchar,	-- IN VARCHAR2,
-      varchar,	-- IN VARCHAR2,
-      varchar,	-- IN VARCHAR2,
-      boolean,	-- IN VARCHAR := FALSE,
-      boolean	-- IN BOOLEAN := FALSE
-)
-returns integer as '
-declare
-      eq__msg	        alias for $1;
-      eq__check_this    alias for $2;
-      eq__against_this  alias for $3;
-      eq__null_ok       alias for $4; -- default FALSE,
-      eq__raise_exc     alias for $5; -- defaultFALSE
-begin
+
+
+-- added
+
+--
+-- procedure ut_assert__eq/5
+--
+CREATE OR REPLACE FUNCTION ut_assert__eq(
+   eq__msg varchar,
+   eq__check_this varchar,
+   eq__against_this varchar,
+   eq__null_ok boolean,  -- default FALSE,
+   eq__raise_exc boolean -- defaultFALSE
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 	return ut_assert__this (
 		 ut_assert__expected (eq__msg, eq__check_this, eq__against_this),
 		 eq__check_this = eq__against_this,
@@ -133,62 +148,72 @@ begin
 		 eq__raise_exc
 		 );
 	
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__eq (
-      varchar,	-- IN VARCHAR2,
-      varchar,	-- IN VARCHAR2,
-      varchar	-- IN VARCHAR2,
-)
-returns integer as '
-declare
-      eq__msg	        alias for $1;
-      eq__check_this    alias for $2;
-      eq__against_this  alias for $3;
-begin
-
-      return ut_assert__eq(eq__msg,eq__check_this,eq__against_this,''f'',''f'');
-
-end;' language 'plpgsql';
 
 
-create function ut_assert__b2v (
-       boolean	-- IN BOOLEAN
-)
-returns varchar as '
-declare
-	bool_exp      alias for $1;
-begin
+--
+-- procedure ut_assert__eq/3
+--
+CREATE OR REPLACE FUNCTION ut_assert__eq(
+   eq__msg varchar,
+   eq__check_this varchar,
+   eq__against_this varchar
+) RETURNS integer AS $$
+DECLARE
+BEGIN
+
+      return ut_assert__eq(eq__msg,eq__check_this,eq__against_this,'f','f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+-- added
+select define_function_args('ut_assert__b2v','bool_exp');
+
+--
+-- procedure ut_assert__b2v/1
+--
+CREATE OR REPLACE FUNCTION ut_assert__b2v(
+   bool_exp boolean
+) RETURNS varchar AS $$
+DECLARE
+BEGIN
 
       if bool_exp
       then
-         return ''true'';
+         return 'true';
       else if not bool_exp
            then
-              return ''false'';
+              return 'false';
            else
-              return ''null'';
+              return 'null';
            end if;
       end if;
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
-create function ut_assert__eq (
-      varchar,
-      boolean,
-      boolean,
-      boolean,
-      boolean
-)
-returns integer as '
-declare
-      eq__msg		alias for $1;
-      eq__check_this	alias for $2;
-      eq__against_this	alias for $3;
-      eq__null_ok	alias for $4; -- default false
-      eq__raise_exc	alias for $5; -- defualt false
-begin
+
+
+--
+-- procedure ut_assert__eq/5
+--
+CREATE OR REPLACE FUNCTION ut_assert__eq(
+   eq__msg varchar,
+   eq__check_this boolean,
+   eq__against_this boolean,
+   eq__null_ok boolean,  -- default false
+   eq__raise_exc boolean -- defualt false
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
      
      return  ut_assert__this (
 		       ut_assert__expected (
@@ -202,43 +227,49 @@ begin
 		       );
 			
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__eq (
-      varchar,	-- IN VARCHAR2,
-      boolean,
-      boolean
-)
-returns integer as '
-declare
-      eq__msg	        alias for $1;
-      eq__check_this    alias for $2;
-      eq__against_this  alias for $3;
-begin
 
-      return ut_assert__eq(eq__msg,eq__check_this,eq__against_this,''f'',''f'');
 
-end;' language 'plpgsql';
+--
+-- procedure ut_assert__eq/3
+--
+CREATE OR REPLACE FUNCTION ut_assert__eq(
+   eq__msg varchar,
+   eq__check_this boolean,
+   eq__against_this boolean
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
-create function ut_assert__eq (
-      varchar,
-      timestamptz,
-      timestamptz,
-      boolean,
-      boolean
-)
-returns integer as '
-declare
-      eq__msg	        alias for $1;
-      eq__check_this    alias for $2;
-      eq__against_this	alias for $3;
-      eq__null_ok	alias for $4; -- default false
-      eq__raise_exc	alias for $5; -- default false
-      c_format		constant varchar := ''MONTH DD, YYYY HH24MISS'';
+      return ut_assert__eq(eq__msg,eq__check_this,eq__against_this,'f','f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- added
+select define_function_args('ut_assert__eq','msg,check_this,against_this,null_ok;false,raise_exc;false');
+
+--
+-- procedure ut_assert__eq/5
+--
+CREATE OR REPLACE FUNCTION ut_assert__eq(
+   eq__msg varchar,
+   eq__check_this timestamptz,
+   eq__against_this timestamptz,
+   eq__null_ok boolean,  -- default false
+   eq__raise_exc boolean -- default false
+
+) RETURNS integer AS $$
+DECLARE
+      c_format		constant varchar := 'MONTH DD, YYYY HH24MISS';
       v_check		varchar;
       v_against		varchar;
-begin
+BEGIN
 
       v_check := to_char (eq__check_this, c_format);
       v_against := to_char (eq__against_this, c_format);
@@ -250,56 +281,61 @@ begin
 		       eq__raise_exc
 		       );
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__eq (
-      varchar,	-- IN VARCHAR2,
-      timestamptz,
-      timestamptz
-)
-returns integer as '
-declare
-      eq__msg	        alias for $1;
-      eq__check_this    alias for $2;
-      eq__against_this  alias for $3;
-begin
 
-      return ut_assert__eq(eq__msg,eq__check_this,eq__against_this,''f'',''f'');
 
-end;' language 'plpgsql';
+--
+-- procedure ut_assert__eq/3
+--
+CREATE OR REPLACE FUNCTION ut_assert__eq(
+   eq__msg varchar,
+   eq__check_this timestamptz,
+   eq__against_this timestamptz
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
-create function ut_assert__ieqminus (
-      varchar,
-      varchar,
-      varchar,
-      varchar,
-      boolean
-)
-returns varchar as '
-declare
-      ieqminus__msg	      alias for $1;
-      ieqminus__query1	      alias for $2;
-      ieqminus__query2	      alias for $3;
-      ieqminus__minus_desc    alias for $4;
-      ieqminus__raise_exc     alias for $5;
+      return ut_assert__eq(eq__msg,eq__check_this,eq__against_this,'f','f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- added
+select define_function_args('ut_assert__ieqminus','msg,query1,query2,minus_desc,raise_exc');
+
+--
+-- procedure ut_assert__ieqminus/5
+--
+CREATE OR REPLACE FUNCTION ut_assert__ieqminus(
+   ieqminus__msg varchar,
+   ieqminus__query1 varchar,
+   ieqminus__query2 varchar,
+   ieqminus__minus_desc varchar,
+   ieqminus__raise_exc boolean
+) RETURNS varchar AS $$
+DECLARE
       v_query		      varchar;
       rec_tableminus	      record;
-      v_eq		      boolean := ''t'';
+      v_eq		      boolean := 't';
 
-begin
+BEGIN
 
-	v_query := '' ( '' ||
+	v_query := ' ( ' ||
 		   ieqminus__query1 ||
-		   '' except '' ||
+		   ' except ' ||
 		   ieqminus__query2 ||
-		   '' ) '' ||
-		   '' union '' ||
-		   '' ( '' ||
+		   ' ) ' ||
+		   ' union ' ||
+		   ' ( ' ||
 		   ieqminus__query2 ||
-		   '' except '' ||
+		   ' except ' ||
 		   ieqminus__query1 ||
-		   '' ) '';
+		   ' ) ';
 
 	for  rec_tableminus in execute v_query;
 
@@ -307,7 +343,7 @@ begin
 	   -- we need to set the default value of v_eq to true.
 	   if found
 	   then
-	      v_eq := ''f'';
+	      v_eq := 'f';
 	   end if;
 
 	   -- One is enough
@@ -316,285 +352,333 @@ begin
 	end loop;
 
       return ut_assert__this (
-                       ut_assert__expected (ieqminus__msg || '' '' || ieqminus__minus_desc,
+                       ut_assert__expected (ieqminus__msg || ' ' || ieqminus__minus_desc,
 					    ieqminus__query1, 
 					    ieqminus__query2
 					    ),
 		       v_eq,
-		       ''f'',
+		       'f',
 		       ieqminus__raise_exc
 		       );
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
-create function ut_assert__eqtable (
-       varchar,
-       varchar,
-       varchar,
-       varchar,
-       varchar,
-       boolean
-)
-returns integer as '
-declare
-      eqtable__msg	      alias for $1;
-      eqtable__check_this     alias for $2;
-      eqtable__against_this   alias for $3;
-      eqtable__check_where    alias for $4; -- default null
-      eqtable__against_where  alias for $5; -- default null
-      eqtable__raise_exc      alias for $6; -- default false
-begin
+
+
+-- added
+select define_function_args('ut_assert__eqtable','msg,check_this,against_this,check_where;null,against_where;null,raise_exc;false');
+
+--
+-- procedure ut_assert__eqtable/6
+--
+CREATE OR REPLACE FUNCTION ut_assert__eqtable(
+   eqtable__msg varchar,
+   eqtable__check_this varchar,
+   eqtable__against_this varchar,
+   eqtable__check_where varchar,   -- default null
+   eqtable__against_where varchar, -- default null
+   eqtable__raise_exc boolean      -- default false
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
       return ut_assert__ieqminus (eqtable__msg,
-			  ''SELECT * FROM '' || eqtable__check_this || ''  WHERE '' ||
-			  coalesce (eqtable__check_where, ''1=1''),
-			  ''SELECT * FROM '' || eqtable__against_this || ''  WHERE '' ||
-			  coalesce (eqtable__against_where, ''1=1''),
-			  ''Table Equality'',
+			  'SELECT * FROM ' || eqtable__check_this || '  WHERE ' ||
+			  coalesce (eqtable__check_where, '1=1'),
+			  'SELECT * FROM ' || eqtable__against_this || '  WHERE ' ||
+			  coalesce (eqtable__against_where, '1=1'),
+			  'Table Equality',
 			  eqtable__raise_exc
 			  );
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__eqtable (
-       varchar,
-       varchar,
-       varchar
-)
-returns integer as '
-declare
-      eqtable__msg	      alias for $1;
-      eqtable__check_this     alias for $2;
-      eqtable__against_this   alias for $3;
-begin
-
-      return ut_assert__eqtable(eqtable__msg,eqtable__check_this,eqtable__against_this,null,null,''f'');
-
-end;' language 'plpgsql';
 
 
-create function ut_assert__eqtabcount (
-       varchar,
-       varchar,
-       varchar,
-       varchar,
-       varchar,
-       boolean
-)
-returns integer as '
-declare
-      eqtabcount__msg		 alias for $1;
-      eqtabcount__check_this     alias for $2;
-      eqtabcount__against_this   alias for $3;
-      eqtabcount__check_where    alias for $4; -- default null
-      eqtabcount__against_where  alias for $5; -- default null
-      eqtabcount__raise_exc      alias for $6; -- default false
-begin
+--
+-- procedure ut_assert__eqtable/3
+--
+CREATE OR REPLACE FUNCTION ut_assert__eqtable(
+   eqtable__msg varchar,
+   eqtable__check_this varchar,
+   eqtable__against_this varchar
+) RETURNS integer AS $$
+DECLARE
+BEGIN
+
+      return ut_assert__eqtable(eqtable__msg,eqtable__check_this,eqtable__against_this,null,null,'f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+-- added
+select define_function_args('ut_assert__eqtabcount','msg,check_this,against_this,check_where;null,against_where;null,raise_exc;false');
+
+--
+-- procedure ut_assert__eqtabcount/6
+--
+CREATE OR REPLACE FUNCTION ut_assert__eqtabcount(
+   eqtabcount__msg varchar,
+   eqtabcount__check_this varchar,
+   eqtabcount__against_this varchar,
+   eqtabcount__check_where varchar,   -- default null
+   eqtabcount__against_where varchar, -- default null
+   eqtabcount__raise_exc boolean      -- default false
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
       return ut_assert__ieqminus (eqtabcount__msg,
-			  ''SELECT COUNT(*) FROM '' || eqtabcount__check_this || ''  WHERE '' ||
-			  coalesce (eqtabcount__check_where, ''1=1''),
-			  ''SELECT COUNT(*) FROM '' || eqtabcount__against_this || ''  WHERE '' ||
-			  coalesce (eqtabcount__against_where, ''1=1''),
-			  ''Table Count Equality'',
+			  'SELECT COUNT(*) FROM ' || eqtabcount__check_this || '  WHERE ' ||
+			  coalesce (eqtabcount__check_where, '1=1'),
+			  'SELECT COUNT(*) FROM ' || eqtabcount__against_this || '  WHERE ' ||
+			  coalesce (eqtabcount__against_where, '1=1'),
+			  'Table Count Equality',
 			  eqtabcount__raise_exc
 			  );
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__eqtabcount (
-       varchar,
-       varchar,
-       varchar
-)
-returns integer as '
-declare
-      eqtabcount__msg		 alias for $1;
-      eqtabcount__check_this     alias for $2;
-      eqtabcount__against_this   alias for $3;
-begin
 
-      return ut_assert__eqtabcount(eqtabcount__msg,eqtabcount__check_this,eqtabcount__against_this,null,null,''f'');
 
-end;' language 'plpgsql';
+--
+-- procedure ut_assert__eqtabcount/3
+--
+CREATE OR REPLACE FUNCTION ut_assert__eqtabcount(
+   eqtabcount__msg varchar,
+   eqtabcount__check_this varchar,
+   eqtabcount__against_this varchar
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
-create function ut_assert__eqquery (
-       varchar,
-       varchar,
-       varchar,
-       boolean
-)
-returns integer as '
-declare
-      eqquery__msg	      alias for $1;
-      eqquery__check_this     alias for $2;
-      eqquery__against_this   alias for $3;
-      eqquery__raise_exc      alias for $4; -- default null
-begin
+      return ut_assert__eqtabcount(eqtabcount__msg,eqtabcount__check_this,eqtabcount__against_this,null,null,'f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- added
+select define_function_args('ut_assert__eqquery','msg,check_this,against_this,raise_exc;null');
+
+--
+-- procedure ut_assert__eqquery/4
+--
+CREATE OR REPLACE FUNCTION ut_assert__eqquery(
+   eqquery__msg varchar,
+   eqquery__check_this varchar,
+   eqquery__against_this varchar,
+   eqquery__raise_exc boolean -- default null
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
       return ut_assert__ieqminus (eqquery__msg,
 			          eqquery__check_this,
 				  eqquery__against_this,
-				  ''Query Equality'',
+				  'Query Equality',
 				  eqquery__raise_exc
 				  );
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__eqquery (
-       varchar,
-       varchar,
-       varchar
-)
-returns integer as '
-declare
-      eqquery__msg	      alias for $1;
-      eqquery__check_this     alias for $2;
-      eqquery__against_this   alias for $3;
-begin
 
-      return ut_assert__eqquery(eqquery__msg,eqquery__check_this,eqquery__against_this,''f'');
 
-end;' language 'plpgsql';
+--
+-- procedure ut_assert__eqquery/3
+--
+CREATE OR REPLACE FUNCTION ut_assert__eqquery(
+   eqquery__msg varchar,
+   eqquery__check_this varchar,
+   eqquery__against_this varchar
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
-create function ut_assert__isnotnull (
-      varchar,
-      varchar,
-      boolean,
-      boolean
-) returns integer as '
-declare
-      isnotnull__msg		alias for $1;
-      isnotnull__check_this	alias for $2;
-      isnotnull__null_ok	alias for $3; -- default false
-      isnotnull__raise_exc	alias for $4; -- default false
-begin
+      return ut_assert__eqquery(eqquery__msg,eqquery__check_this,eqquery__against_this,'f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+-- added
+select define_function_args('ut_assert__isnotnull','msg,check_this,null_ok;false,raise_exc;false');
+
+--
+-- procedure ut_assert__isnotnull/4
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnotnull(
+   isnotnull__msg varchar,
+   isnotnull__check_this varchar,
+   isnotnull__null_ok boolean,  -- default false
+   isnotnull__raise_exc boolean -- default false
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
       return ut_assert__this (
-	        ''IS NOT NULL: '' || isnotnull__msg,
+	        'IS NOT NULL: ' || isnotnull__msg,
 		isnotnull__check_this IS NOT NULL,
 		isnotnull__null_ok,
 		isnotnull__raise_exc
 		);
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__isnotnull (
-       varchar,
-       varchar
-)
-returns integer as '
-declare
-      isnotnull__msg	        alias for $1;
-      isnotnull__check_this     alias for $2;
-begin
-
-      return ut_assert__isnotnull(isnotnull__msg,isnotnull__check_this,''f'',''f'');
-
-end;' language 'plpgsql';
 
 
-create function ut_assert__isnull (
-      varchar,
-      varchar,
-      boolean,
-      boolean
-) returns integer as '
-declare
-      isnull__msg		alias for $1;
-      isnull__check_this	alias for $2;
-      isnull__null_ok		alias for $3; -- default false
-      isnull__raise_exc		alias for $4; -- default false
-begin
+--
+-- procedure ut_assert__isnotnull/2
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnotnull(
+   isnotnull__msg varchar,
+   isnotnull__check_this varchar
+) RETURNS integer AS $$
+DECLARE
+BEGIN
+
+      return ut_assert__isnotnull(isnotnull__msg,isnotnull__check_this,'f','f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+-- added
+select define_function_args('ut_assert__isnull','msg,check_this,null_ok;false,raise_exc;false');
+
+--
+-- procedure ut_assert__isnull/4
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnull(
+   isnull__msg varchar,
+   isnull__check_this varchar,
+   isnull__null_ok boolean,  -- default false
+   isnull__raise_exc boolean -- default false
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
       return ut_assert__this (
-	        ''IS NULL: '' || isnull__msg,
+	        'IS NULL: ' || isnull__msg,
 		isnull__check_this IS NULL,
 		isnull__null_ok,
 		isnull__raise_exc
 		);
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 
 -- Overload for calls with default values
-create function ut_assert__isnull (
-       varchar,
-       varchar
-)
-returns integer as '
-declare
-      isnull__msg	     alias for $1;
-      isnull__check_this     alias for $2;
-begin
 
-      return ut_assert__isnull(isnull__msg,isnull__check_this,''f'',''f'');
 
-end;' language 'plpgsql';
+--
+-- procedure ut_assert__isnull/2
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnull(
+   isnull__msg varchar,
+   isnull__check_this varchar
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
-create function ut_assert__isnotnull (
-      varchar,
-      boolean,
-      boolean,
-      boolean
-) returns integer as '
-declare
-      isnotnull__msg		alias for $1;
-      isnotnull__check_this	alias for $2;
-      isnotnull__null_ok	alias for $3; -- default false
-      isnotnull__raise_exc	alias for $4; -- default false
-begin
+      return ut_assert__isnull(isnull__msg,isnull__check_this,'f','f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+--
+-- procedure ut_assert__isnotnull/4
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnotnull(
+   isnotnull__msg varchar,
+   isnotnull__check_this boolean,
+   isnotnull__null_ok boolean,  -- default false
+   isnotnull__raise_exc boolean -- default false
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
       return ut_assert__this (
-	        ''IS NOT NULL: '' || isnotnull__msg,
+	        'IS NOT NULL: ' || isnotnull__msg,
 		isnotnull__check_this IS NOT NULL,
 		isnotnull__null_ok,
 		isnotnull__raise_exc
 		);
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__isnotnull (
-       varchar,
-       boolean
-)
-returns integer as '
-declare
-      isnotnull__msg	        alias for $1;
-      isnotnull__check_this     alias for $2;
-begin
 
-      return ut_assert__isnotnull(isnotnull__msg,isnotnull__check_this,''f'',''f'');
 
-end;' language 'plpgsql';
+--
+-- procedure ut_assert__isnotnull/2
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnotnull(
+   isnotnull__msg varchar,
+   isnotnull__check_this boolean
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
-create function ut_assert__isnull (
-      varchar,
-      boolean,
-      boolean,
-      boolean
-) returns integer as '
-declare
-      isnull__msg		alias for $1;
-      isnull__check_this	alias for $2;
-      isnull__null_ok		alias for $3; -- default false
-      isnull__raise_exc		alias for $4; -- default false
-begin
+      return ut_assert__isnotnull(isnotnull__msg,isnotnull__check_this,'f','f');
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+--
+-- procedure ut_assert__isnull/4
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnull(
+   isnull__msg varchar,
+   isnull__check_this boolean,
+   isnull__null_ok boolean,  -- default false
+   isnull__raise_exc boolean -- default false
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
       return ut_assert__this (
-	        ''IS NULL: '' || isnull__msg,
+	        'IS NULL: ' || isnull__msg,
 		isnull__check_this IS NULL,
 		isnull__null_ok,
 		isnull__raise_exc
 		);
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 -- Overload for calls with default values
-create function ut_assert__isnull (
-       varchar,
-       boolean
-)
-returns integer as '
-declare
-      isnull__msg	     alias for $1;
-      isnull__check_this     alias for $2;
-begin
 
-      return ut_assert__isnull(isnull__msg,isnull__check_this,''f'',''f'');
 
-end;' language 'plpgsql';
+--
+-- procedure ut_assert__isnull/2
+--
+CREATE OR REPLACE FUNCTION ut_assert__isnull(
+   isnull__msg varchar,
+   isnull__check_this boolean
+) RETURNS integer AS $$
+DECLARE
+BEGIN
+
+      return ut_assert__isnull(isnull__msg,isnull__check_this,'f','f');
+
+END;
+$$ LANGUAGE plpgsql;
 
 
 

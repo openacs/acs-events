@@ -122,38 +122,42 @@ comment on column recurrences.custom_func is '
 -- Currently supports only new and delete methods.
 --
 
-create function recurrence__new (
-       --
-       -- Creates a new recurrence
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_type        Sets interval_type of new recurrence
-       -- @param every_nth_interval   Sets every_nth_interval of new recurrence
-       -- @param days_of_week         Sets days_of_week of new recurrence
-       -- @param recur_until          Sets recur_until of new recurrence
-       -- @param custom_func          Sets name of custom recurrence function
-       --                                  
-       -- @return id of new recurrence
-       --
-       varchar,		-- recurrence_interval_types.interval_name%TYPE,
-       integer,		-- recurrences.every_nth_interval%TYPE,
-       varchar,		-- recurrences.days_of_week%TYPE default null,
-       timestamptz,	-- recurrences.recur_until%TYPE default null,
-       varchar		-- recurrences.custom_func%TYPE default null
-) 
-returns integer as '	-- recurrences.recurrence_id%TYPE
-declare
-       new__interval_name	  alias for $1; 
-       new__every_nth_interval   alias for $2;
-       new__days_of_week         alias for $3; -- default null,
-       new__recur_until          alias for $4; -- default null,
-       new__custom_func          alias for $5; -- default null
+
+
+-- added
+select define_function_args('recurrence__new','interval_name,every_nth_interval,days_of_week;null,recur_until;null,custom_func;null');
+
+--
+-- procedure recurrence__new/5
+--
+     --
+     -- Creates a new recurrence
+     --
+     -- @author W. Scott Meeks
+     --
+     -- @param interval_type        Sets interval_type of new recurrence
+     -- @param every_nth_interval   Sets every_nth_interval of new recurrence
+     -- @param days_of_week         Sets days_of_week of new recurrence
+     -- @param recur_until          Sets recur_until of new recurrence
+     -- @param custom_func          Sets name of custom recurrence function
+     --                                  
+     -- @return id of new recurrence
+     --
+
+CREATE OR REPLACE FUNCTION recurrence__new(
+   new__interval_name varchar,
+   new__every_nth_interval integer,
+   new__days_of_week varchar,    -- default null,
+   new__recur_until timestamptz, -- default null,
+   new__custom_func varchar      -- default null
+
+) RETURNS integer AS $$
+DECLARE
        v_recurrence_id		  recurrences.recurrence_id%TYPE;
        v_interval_type_id	  recurrence_interval_types.interval_type%TYPE;
-begin
+BEGIN
 
-       select nextval(''recurrence_sequence'') into v_recurrence_id from dual;
+       select nextval('recurrence_sequence') into v_recurrence_id from dual;
         
        select interval_type
        into   v_interval_type_id 
@@ -177,33 +181,40 @@ begin
          
        return v_recurrence_id;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function recurrence__delete (
-       --
-       -- Deletes the recurrence
-       -- Note: this will fail if there are any events_with this recurrence 
-       -- because of foreign key constraints.  use acs-events__delete instead
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param recurrence_id id of recurrence to delete
-       --
-       -- @return 0 (procedure dummy)
-       --
-       integer		   -- in recurrences.recurrence_id%TYPE
-)
-returns integer as ' 
-declare 
-       delete__recurrence_id alias for $1; 
-begin
 
+
+-- added
+select define_function_args('recurrence__delete','recurrence_id');
+
+--
+-- procedure recurrence__delete/1
+--
+     --
+     -- Deletes the recurrence
+     -- Note: this will fail if there are any events_with this recurrence 
+     -- because of foreign key constraints.  use acs-events__delete instead
+     --
+     -- @author W. Scott Meeks
+     --
+     -- @param recurrence_id id of recurrence to delete
+     --
+     -- @return 0 (procedure dummy)
+     --
+
+CREATE OR REPLACE FUNCTION recurrence__delete(
+   delete__recurrence_id integer
+) RETURNS integer AS $$
+DECLARE 
+BEGIN
        delete from recurrences
        where  recurrence_id = delete__recurrence_id;
 
        return 0;
-
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 

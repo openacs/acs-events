@@ -50,27 +50,33 @@ comment on table time_intervals is '
 --
 
 
-create function time_interval__new (
-       -- 
-       -- Creates a new time interval
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param start_date   Sets this as start_date of new interval
-       -- @param end_date     Sets this as end_date of new interval
-       --
-       -- @return id of new time interval
-       --
-       timestamptz,     -- time_intervals.start_date%TYPE default null,
-       timestamptz      -- time_intervals.end_date%TYPE default null
-) 
-returns integer as '    -- time_intervals.interval_id%TYPE
-declare
-       new__start_date  alias for $1; -- default null,
-       new__end_date    alias for $2; -- default null
+
+
+-- added
+select define_function_args('time_interval__new','start_date;null,end_date;null');
+
+--
+-- procedure time_interval__new/2
+--
+     -- 
+     -- Creates a new time interval
+     --
+     -- @author W. Scott Meeks
+     --
+     -- @param start_date   Sets this as start_date of new interval
+     -- @param end_date     Sets this as end_date of new interval
+     --
+     -- @return id of new time interval
+     --
+CREATE OR REPLACE FUNCTION time_interval__new(
+   new__start_date timestamptz,   -- default null
+   new__end_date timestamptz      -- default null
+
+) RETURNS integer AS $$
+DECLARE
        v_interval_id     time_intervals.interval_id%TYPE;
-begin
-       select nextval(''timespan_sequence'') into v_interval_id from dual;
+BEGIN
+       select nextval('timespan_sequence') into v_interval_id from dual;
 
        insert into time_intervals 
             (interval_id, start_date, end_date)
@@ -79,58 +85,71 @@ begin
                 
        return v_interval_id;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function time_interval__delete (
-       --
-       -- Deletes the given time interval
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_id  id of the interval to delete
-       --
-       -- @return 0 (procedure dummy)
-       --
-       integer          -- time_intervals.interval_id%TYPE
-)
-returns integer as '
-declare
-       delete__interval_id      alias for $1;
-begin
-        
+
+
+-- added
+select define_function_args('time_interval__delete','interval_id');
+
+--
+-- procedure time_interval__delete/1
+--
+     --
+     -- Deletes the given time interval
+     --
+     -- @author W. Scott Meeks
+     --
+     -- @param interval_id  id of the interval to delete
+     --
+     -- @return 0 (procedure dummy)
+     --
+CREATE OR REPLACE FUNCTION time_interval__delete(
+   delete__interval_id integer
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
        delete from time_intervals
        where  interval_id = delete__interval_id;
 
        return 0;
-
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
  
-create function time_interval__edit (
-       -- 
-       -- Updates the start_date or end_date of an interval
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_id  id of the interval to update
-       -- @param start_date   Sets this as the new 
-       --                     start_date of the interval.
-       -- @param end_date     Sets this as the new 
-       --                     end_date of the interval.
-       --
-       -- @return 0 (procedure dummy)
-       --
-       integer,             -- time_intervals.interval_id%TYPE,
-       timestamptz,         -- time_intervals.start_date%TYPE default null,
-       timestamptz          -- time_intervals.end_date%TYPE default null
-)
-returns integer as '
-declare
-        edit__interval_id     alias for $1;
-        edit__start_date      alias for $2; -- default null,
-        edit__end_date        alias for $3; -- default null
-begin
+
+
+-- added
+select define_function_args('time_interval__edit','interval_id,start_date;null,end_date;null');
+
+--
+-- procedure time_interval__edit/3
+--
+     -- 
+     -- Updates the start_date or end_date of an interval
+     --
+     -- @author W. Scott Meeks
+     --
+     -- @param interval_id  id of the interval to update
+     -- @param start_date   Sets this as the new 
+     --                     start_date of the interval.
+     -- @param end_date     Sets this as the new 
+     --                     end_date of the interval.
+     --
+     -- @return 0 (procedure dummy)
+     --
+
+CREATE OR REPLACE FUNCTION time_interval__edit(
+   edit__interval_id integer,
+   edit__start_date timestamptz, -- default null
+   edit__end_date timestamptz    -- default null
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
         -- JS: I hate deeply nested if-else-ifs!!! 
 
@@ -160,34 +179,40 @@ begin
 
         return 0;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function time_interval__shift (
-       --
-       -- Updates the start_date or end_date of an interval based on offsets (general)
-       --
-       -- @author W. Scott Meeks
-       -- @param interval_id  The interval to update.
-       -- @param start_offset Adds this date interval to the
-       --                     start_date of the interval.  No effect if 
-       --                     start_date is null.
-       -- @param end_offset   Adds this date interval to the
-       --                     end_date of the interval.  No effect if 
-       --                     end_date is null.
-       --
-       -- @return 0 (procedure dummy)
-       --
-       integer,              -- time_intervals.interval_id%TYPE,
-       interval,                     
-       interval         
-)
-returns integer as '
-declare 
-       shift__interval_id      alias for $1;
-       shift__start_offset     alias for $2; -- default 0,
-       shift__end_offset       alias for $3; -- default 0
-begin
+
+
+-- added
+select define_function_args('time_interval__shift','interval_id,start_offset;0,end_offset;0');
+
+--
+-- procedure time_interval__shift/3
+--
+     --
+     -- Updates the start_date or end_date of an interval based on offsets (general)
+     --
+     -- @author W. Scott Meeks
+     -- @param interval_id  The interval to update.
+     -- @param start_offset Adds this date interval to the
+     --                     start_date of the interval.  No effect if 
+     --                     start_date is null.
+     -- @param end_offset   Adds this date interval to the
+     --                     end_date of the interval.  No effect if 
+     --                     end_date is null.
+     --
+     -- @return 0 (procedure dummy)
+     --
+CREATE OR REPLACE FUNCTION time_interval__shift(
+   shift__interval_id integer,
+   shift__start_offset interval, -- default 0,
+   shift__end_offset interval    -- default 0
+
+) RETURNS integer AS $$
+DECLARE 
+BEGIN
        update time_intervals
        set    start_date = start_date + shift__start_offset,
               end_date   = end_date + shift__end_offset
@@ -195,70 +220,78 @@ begin
 
        return 0;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function time_interval__shift (
-       --
-       -- Updates the start_date or end_date of an interval based on offsets of
-       -- fractional days.
-       --
-       -- JS: Overloaded function to make above compatible with Oracle behavior
-       -- JS: when an integer (for number of days) is supplied as a parameter.
-       --
-       -- @param interval_id  The interval to update.
-       -- @param start_offset Adds this number of days to the
-       --                     start_date of the interval.  No effect if 
-       --                     start_date is null.
-       -- @param end_offset   Adds this number of days to the
-       --                     end_date of the interval.  No effect if 
-       --                     end_date is null.
-       --
-       -- @return 0 (procedure dummy)
-       --
-       integer,              -- time_intervals.interval_id%TYPE,
-       integer,              
-       integer          
-)
-returns integer as '
-declare 
-      shift__interval_id      alias for $1;
-      shift__start_offset     alias for $2; -- default 0,
-      shift__end_offset       alias for $3; -- default 0
-begin
+
+
+--
+-- procedure time_interval__shift/3
+--
+    --
+    -- Updates the start_date or end_date of an interval based on offsets of
+    -- fractional days.
+    --
+    -- JS: Overloaded function to make above compatible with Oracle behavior
+    -- JS: when an integer (for number of days) is supplied as a parameter.
+    --
+    -- @param interval_id  The interval to update.
+    -- @param start_offset Adds this number of days to the
+    --                     start_date of the interval.  No effect if 
+    --                     start_date is null.
+    -- @param end_offset   Adds this number of days to the
+    --                     end_date of the interval.  No effect if 
+    --                     end_date is null.
+    --
+    -- @return 0 (procedure dummy)
+CREATE OR REPLACE FUNCTION time_interval__shift(
+   shift__interval_id integer,
+   shift__start_offset integer, -- default 0,
+   shift__end_offset integer    -- default 0
+
+) RETURNS integer AS $$
+DECLARE 
+BEGIN
 
       return time_interval__shift(
                  shift__interval_id,
-                 to_interval(shift__start_offset,''days''),
-                 to_interval(shift__end_offset,''days'')
+                 to_interval(shift__start_offset,'days'),
+                 to_interval(shift__end_offset,'days')
                  );
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 
-create function time_interval__overlaps_p (
-       -- 
-       -- Returns true if the two intervals overlap, false otherwise.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_1_id
-       -- @param interval_2_id
-       --
-       -- @return true if the two intervals overlap, false otherwise.
-       --
-       integer,         -- time_intervals.interval_id%TYPE,
-       integer          -- time_intervals.interval_id%TYPE
-)
-returns boolean as '
-declare
-       overlaps_p__interval_id_1   alias for $1;
-       overlaps_p__interval_id_2   alias for $2;
+
+
+-- added
+
+--
+-- procedure time_interval__overlaps_p/2
+--
+    -- 
+    -- Returns true if the two intervals overlap, false otherwise.
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param interval_1_id
+    -- @param interval_2_id
+    --
+    -- @return true if the two intervals overlap, false otherwise.
+    --
+CREATE OR REPLACE FUNCTION time_interval__overlaps_p(
+   overlaps_p__interval_id_1 integer,
+   overlaps_p__interval_id_2 integer
+
+) RETURNS boolean AS $$
+DECLARE
        v_start_1                   timestamptz;
        v_start_2                   timestamptz;
        v_end_1                     timestamptz;
        v_end_2                     timestamptz;
-begin
+BEGIN
        -- Pull out the start and end dates and call the main overlaps_p.
        select start_date, end_date
        into   v_start_1, v_end_1
@@ -277,33 +310,39 @@ begin
                   v_end_2
                   );
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function time_interval__overlaps_p (
-       --
-       -- Returns true if the interval bounded by the given start_date or
-       -- end_date overlaps the given interval, false otherwise.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param start_date  See if it overlaps the interval starting from this date.
-       -- @param end_date    See if it overlaps the interval ending on this date.
-       --
-       -- @return true if the interval bounded by start_date through end_date, false otherwise.
-       --
-       integer,         -- time_intervals.interval_id%TYPE,
-       timestamptz,     -- time_intervals.start_date%TYPE default null,
-       timestamptz      -- time_intervals.end_date%TYPE default null
-)
-returns boolean as '
-declare
-       overlaps_p__interval_id     alias for $1; 
-       overlaps_p__start_date      alias for $2; -- default null,
-       overlaps_p__end_date        alias for $3; -- default null
+
+
+-- added
+select define_function_args('time_interval__overlaps_p','interval_id,start_date;null,end_date;null');
+
+--
+-- procedure time_interval__overlaps_p/3
+--
+    --
+    -- Returns true if the interval bounded by the given start_date or
+    -- end_date overlaps the given interval, false otherwise.
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param start_date  See if it overlaps the interval starting from this date.
+    -- @param end_date    See if it overlaps the interval ending on this date.
+    --
+    -- @return true if the interval bounded by start_date through end_date, false otherwise.
+    --
+CREATE OR REPLACE FUNCTION time_interval__overlaps_p(
+   overlaps_p__interval_id integer,
+   overlaps_p__start_date timestamptz, -- default null,
+   overlaps_p__end_date timestamptz    -- default null
+
+) RETURNS boolean AS $$
+DECLARE
        v_interval_start            time_intervals.start_date%TYPE;
        v_interval_end              time_intervals.end_date%TYPE;
-begin
+BEGIN
        -- Pull out the start and end date and call the main overlaps_p.
        select start_date, end_date
        into   v_interval_start, v_interval_end
@@ -317,34 +356,36 @@ begin
                   overlaps_p__end_date
                   );
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function time_interval__overlaps_p (
-       --
-       -- Checks if two intervals overlaps
-       -- JS:  There is a simpler way to evaluate whether intervals overlap, 
-       -- JS:  so this function can be optimized.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_1_id First interval
-       -- @param interval_2_id Second interval
-       -- 
-       -- @return true if intervals overlap, otherwise false.
-       --
-       timestamptz,     -- time_intervals.start_date%TYPE,
-       timestamptz,     -- time_intervals.end_date%TYPE,
-       timestamptz,     -- time_intervals.start_date%TYPE,
-       timestamptz      -- time_intervals.end_date%TYPE
-)
-returns boolean as '
-declare
-       overlaps_p__start_1      alias for $1;
-       overlaps_p__end_1        alias for $2;
-       overlaps_p__start_2      alias for $3;
-       overlaps_p__end_2        alias for $4;
-begin
+
+
+--
+-- procedure time_interval__overlaps_p/4
+--
+    --
+    -- Checks if two intervals overlaps
+    -- JS:  There is a simpler way to evaluate whether intervals overlap, 
+    -- JS:  so this function can be optimized.
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param interval_1_id First interval
+    -- @param interval_2_id Second interval
+    -- 
+    -- @return true if intervals overlap, otherwise false.
+    --
+CREATE OR REPLACE FUNCTION time_interval__overlaps_p(
+   overlaps_p__start_1 timestamptz,
+   overlaps_p__end_1 timestamptz,
+   overlaps_p__start_2 timestamptz,
+   overlaps_p__end_2 timestamptz
+
+) RETURNS boolean AS $$
+DECLARE
+BEGIN
 
        -- JS: Modified yet another deeply nested if-else-if
        -- JS: Note that null date is the representation for infinite 
@@ -398,30 +439,38 @@ begin
 
        end if;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function time_interval__eq (
-       --
-       -- Checks if two intervals are equal
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_1_id First interval
-       -- @param interval_2_id Second interval
-       -- 
-       -- @return true if intervals are equal, otherwise false.
-       --
-       integer,         -- time_intervals.interval_id%TYPE,
-       integer          -- time_intervals.interval_id%TYPE
-)
-returns boolean as '    --  return boolean
-declare
-       eq__interval_1_id   alias for $1;
-       eq__interval_2_id   alias for $2;
+
+
+-- added
+select define_function_args('time_interval__eq','interval_1_id,interval_2_id');
+
+--
+-- procedure time_interval__eq/2
+--
+    --
+    -- Checks if two intervals are equal
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param interval_1_id First interval
+    -- @param interval_2_id Second interval
+    -- 
+    -- @return true if intervals are equal, otherwise false.
+    --
+CREATE OR REPLACE FUNCTION time_interval__eq(
+   eq__interval_1_id integer,
+   eq__interval_2_id integer
+
+) RETURNS boolean AS $$
+--  return boolean
+DECLARE
        interval_1_row time_intervals%ROWTYPE;
        interval_2_row time_intervals%ROWTYPE;
-begin
+BEGIN
        select * into interval_1_row
        from   time_intervals
        where  interval_id = eq__interval_1_id;
@@ -438,50 +487,56 @@ begin
             return false;
        end if;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create or replace function time_interval__copy(
-       --
-       -- Creates a new copy of a time interval, offset by optional offset
-       --
-       -- JS: We need to be careful in interpreting the copy offset.
-       -- JS: Oracle interprets integers as full days when doing
-       -- JS: date arithmetic.  Thus,
-       -- JS: 
-       -- JS:    select sysdate()+1 from dual;
-       -- JS:
-       -- JS: will yield the next date, correct up to the second of the next day
-       -- JS: that the query was run.  
-       -- JS: 
-       -- JS: In PostgreSQL, we need to specify the type of interval when
-       -- JS: doing date arithmetic.  if, say, an integer is used in date arithmetic, 
-       -- JS: the results are weird.  For example, 
-       -- JS:
-       -- JS:    select now()+1 from dual;
-       -- JS:
-       -- JS: will yield the MIDNIGHT of the next date that the query was run, i.e.,
-       -- JS: the timestamp is typecasted as a date with a day granularity. To get the 
-       -- JS: same effect as Oracle, we need to use explicitly typecast the integer into 
-       -- JS: a day interval. 
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_id   Interval to copy
-       -- @param offset        Interval is offset by this date interval
-       --
-       -- @return interval_id of the copied interval
-       --
-       integer,         -- time_intervals.interval_id%TYPE,
-       interval        
-)
-returns integer as '    -- time_intervals.interval_id%TYPE
-declare    
-       copy__interval_id     alias for $1;
-       copy__offset          alias for $2; -- default 0
+
+
+-- added
+select define_function_args('time_interval__copy','interval_id,offset;0');
+
+--
+-- procedure time_interval__copy/2
+--
+    --
+    -- Creates a new copy of a time interval, offset by optional offset
+    --
+    -- JS: We need to be careful in interpreting the copy offset.
+    -- JS: Oracle interprets integers as full days when doing
+    -- JS: date arithmetic.  Thus,
+    -- JS: 
+    -- JS:    select sysdate()+1 from dual;
+    -- JS:
+    -- JS: will yield the next date, correct up to the second of the next day
+    -- JS: that the query was run.  
+    -- JS: 
+    -- JS: In PostgreSQL, we need to specify the type of interval when
+    -- JS: doing date arithmetic.  if, say, an integer is used in date arithmetic, 
+    -- JS: the results are weird.  For example, 
+    -- JS:
+    -- JS:    select now()+1 from dual;
+    -- JS:
+    -- JS: will yield the MIDNIGHT of the next date that the query was run, i.e.,
+    -- JS: the timestamp is typecasted as a date with a day granularity. To get the 
+    -- JS: same effect as Oracle, we need to use explicitly typecast the integer into 
+    -- JS: a day interval. 
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param interval_id   Interval to copy
+    -- @param offset        Interval is offset by this date interval
+    --
+    -- @return interval_id of the copied interval
+CREATE OR REPLACE FUNCTION time_interval__copy(
+   copy__interval_id integer,
+   copy__offset interval -- default 0
+
+) RETURNS integer AS $$
+DECLARE    
        interval_row           time_intervals%ROWTYPE;
        v_foo                 timestamptz;
-begin
+BEGIN
        select * into interval_row
        from   time_intervals
        where  interval_id = copy__interval_id;
@@ -491,61 +546,72 @@ begin
                   (interval_row.end_date ::timestamp + copy__offset) :: timestamptz
                   );
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
-create function time_interval__copy (
-       --
-       -- Creates a new copy of a time interval.
-       -- JS: Overloaded versaion of above, no offset
-       --
-       -- @param interval_id   Interval to copy
-       --
-       -- @return interval_id of the copied interval
-       --
-       integer
-)
-returns integer as '    -- return time_intervals.interval_id%TYPE
-declare    
-       copy__interval_id     alias for $1;
+
+
+--
+-- procedure time_interval__copy/1
+--
+    --
+    -- Creates a new copy of a time interval.
+    -- JS: Overloaded versaion of above, no offset
+    --
+    -- @param interval_id   Interval to copy
+    --
+    -- @return interval_id of the copied interval
+    --
+CREATE OR REPLACE FUNCTION time_interval__copy(
+   copy__interval_id integer
+
+) RETURNS integer AS $$
+-- return time_intervals.interval_id%TYPE
+DECLARE    
        v_query               varchar;
        v_result              time_intervals.interval_id%TYPE;
        rec_datecalc          record;
-begin
+BEGIN
         return time_interval__copy(
                    copy__interval_id,
-                   interval ''0 days''
+                   interval '0 days'
                    );
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 
-create function time_interval__copy(
-       --
-       -- Creates a new copy of a time interval, offset by optional offset
-       --
-       -- JS: Overloaded function to make above compatible with Oracle behavior
-       -- JS: when an integer (for number of days) is supplied as a parameter.
-       --
-       -- @param interval_id   Interval to copy
-       -- @param offset        Interval is offset by this number of days
-       --
-       -- @return interval_id of the copied interval
-       --
-       integer,         -- time_intervals.interval_id%TYPE,
-       integer
-)
-returns integer as '    -- time_intervals.interval_id%TYPE
-declare    
-       copy__interval_id     alias for $1;
-       copy__offset          alias for $2; -- default 0
-begin
+
+
+--
+-- procedure time_interval__copy/2
+--
+    --
+    -- Creates a new copy of a time interval, offset by optional offset
+    --
+    -- JS: Overloaded function to make above compatible with Oracle behavior
+    -- JS: when an integer (for number of days) is supplied as a parameter.
+    --
+    -- @param interval_id   Interval to copy
+    -- @param offset        Interval is offset by this number of days
+    --
+    -- @return interval_id of the copied interval
+    --
+CREATE OR REPLACE FUNCTION time_interval__copy(
+   copy__interval_id integer,
+   copy__offset integer -- default 0
+
+) RETURNS integer AS $$
+DECLARE    
+BEGIN
 
        return time_interval__copy(
                   copy__interval_id,
-                  to_interval(copy__offset,''days'')
+                  to_interval(copy__offset,'days')
                   );
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
 
 
@@ -607,35 +673,41 @@ comment on table timespans is '
 --     multi_interval_p ()
 
 
-create function timespan__new (
-       --
-       -- Creates a new timespan (20.20.10)
-       -- given a time_interval
-       --
-       -- JS: Allow user to specify whether the itme interval is to be copied or not
-       -- JS: This gives more flexibility of not making a copy instead of requiring 
-       -- JS: the caller responsible for deleting the copy.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param interval_id    Id of interval to be included/copied in timespan, 
-       -- @param copy_p         If true, make another copy of the interval, 
-       --                       else simply include the interval in the timespan
-       --
-       -- @return Id of new timespan       
-       --
-       integer,         -- time_intervals.interval_id%TYPE
-       boolean          
-)
-returns integer as '    -- timespans.timespan_id%TYPE
-declare
-        new__interval_id        alias for $1;
-        new__copy_p             alias for $2;
+
+
+-- added
+
+--
+-- procedure timespan__new/2
+--
+    --
+    -- Creates a new timespan (20.20.10)
+    -- given a time_interval
+    --
+    -- JS: Allow user to specify whether the itme interval is to be copied or not
+    -- JS: This gives more flexibility of not making a copy instead of requiring 
+    -- JS: the caller responsible for deleting the copy.
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param interval_id    Id of interval to be included/copied in timespan, 
+    -- @param copy_p         If true, make another copy of the interval, 
+    --                       else simply include the interval in the timespan
+    --
+    -- @return Id of new timespan       
+    --
+CREATE OR REPLACE FUNCTION timespan__new(
+   new__interval_id integer,
+   new__copy_p boolean
+
+) RETURNS integer AS $$
+-- timespans.timespan_id%TYPE
+DECLARE
         v_timespan_id           timespans.timespan_id%TYPE;
         v_interval_id           time_intervals.interval_id%TYPE;
-begin
+BEGIN
         -- get a new id;
-        select nextval(''timespan_sequence'') into v_timespan_id from dual;
+        select nextval('timespan_sequence') into v_timespan_id from dual;
 
         if new__copy_p
         then      
@@ -652,57 +724,69 @@ begin
         
         return v_timespan_id;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 --  end new;
 
-create function timespan__new (
-       --
-       -- Creates a new timespan (20.20.10)
-       -- given a time_interval
-       --
-       -- JS: I understand why we want to copy here (since interval_id
-       -- JS: may be used by another), but see note on time_span__copy
-       -- JS: below.   THE ONLY REASON WHY DEFAULT IS TRUE IS TO MAINTAIN
-       -- JS: COMPATIBILITY WITH ORIGINAL VERSION.  I DO NOT THINK TRUE
-       -- JS: SHOULD BE THE DEFAULT.
-       --
-       -- @param interval_id    Id of interval to be copied in timespan, 
-       --
-       -- @return Id of new timespan       
-       --
-       integer          -- time_intervals.interval_id%TYPE
-)
-returns integer as '    -- timespans.timespan_id%TYPE
-declare
-        new__interval_id        alias for $1;
-begin
+
+
+--
+-- procedure timespan__new/1
+--
+    --
+    -- Creates a new timespan (20.20.10)
+    -- given a time_interval
+    --
+    -- JS: I understand why we want to copy here (since interval_id
+    -- JS: may be used by another), but see note on time_span__copy
+    -- JS: below.   THE ONLY REASON WHY DEFAULT IS TRUE IS TO MAINTAIN
+    -- JS: COMPATIBILITY WITH ORIGINAL VERSION.  I DO NOT THINK TRUE
+    -- JS: SHOULD BE THE DEFAULT.
+    --
+    -- @param interval_id    Id of interval to be copied in timespan, 
+    --
+    -- @return Id of new timespan       
+    --
+CREATE OR REPLACE FUNCTION timespan__new(
+   new__interval_id integer
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
         return timespan__new(
                    new__interval_id,
                    true
                    );
         
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__new (
-       --
-       -- Creates a new timespan (20.20.10)
-       -- given a start date and end date.  A new time interval with the 
-       -- start and end dates is automatically created.
-       --
-       -- @param start_date     Start date of interval to be included/copied in timespan, 
-       -- @param end_date       End date of interval to be included/copied in timespan, 
-       --
-       -- @return Id of new timespan       
-       --
-       timestamptz,     --  time_intervals.start_date%TYPE default null,
-       timestamptz      --  time_intervals.end_date%TYPE default null
-)
-returns integer as '    --  timespans.timespan_id%TYPE
-declare
-       new__start_date  alias for $1; -- default null,
-       new__end_date    alias for $2; -- default null
-begin
+
+
+-- added
+select define_function_args('timespan__new','start_date;null,end_date;null');
+
+--
+-- procedure timespan__new/2
+--
+    --
+    -- Creates a new timespan (20.20.10)
+    -- given a start date and end date.  A new time interval with the 
+    -- start and end dates is automatically created.
+    --
+    -- @param start_date     Start date of interval to be included/copied in timespan, 
+    -- @param end_date       End date of interval to be included/copied in timespan, 
+    --
+    -- @return Id of new timespan       
+    --
+CREATE OR REPLACE FUNCTION timespan__new(
+   new__start_date  timestamptz,     -- default null,
+   new__end_date timestamptz         -- default null
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
        -- JS: If we simply call timespan__new with default copy_p = true,
        -- JS: there will be two new time intervals that will be created
@@ -711,25 +795,33 @@ begin
        -- JS: setting copy_p to false.
        return timespan__new(time_interval__new(new__start_date, new__end_date),false);
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__delete (
-       -- 
-       -- Deletes the timespan and any contained intervals 
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   Id of timespan to delete
-       --
-       -- @return 0 (procedure dummy)
-       --
-       integer      -- timespans.timespan_id%TYPE
-)
-returns integer as '
-declare
-       delete__timespan_id alias for $1; 
-begin
+
+
+-- added
+select define_function_args('timespan__delete','timespan_id');
+
+--
+-- procedure timespan__delete/1
+--
+    -- 
+    -- Deletes the timespan and any contained intervals 
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   Id of timespan to delete
+    --
+    -- @return 0 (procedure dummy)
+    --
+CREATE OR REPLACE FUNCTION timespan__delete(
+   delete__timespan_id integer
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
        -- Delete intervals, corresponding timespan entries deleted by
        -- cascading constraints
 
@@ -739,38 +831,45 @@ begin
                               where  timespan_id = delete__timespan_id);
        return 0;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__join_interval (
-       --
-       -- Join a time interval to an existing timespan
-       --
-       -- JS: Slight changes from original
-       -- JS: Return the interval_id being joined, since it will not be the
-       -- JS: same as join_interval__interval_id if join_interval__copy_p is true
-       -- JS: The Oracle version is a procedure, so this change is completely free.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   Id of timespan to join to
-       -- @param interval_id   Id of interval to include/copy into timespan
-       -- @param copy_p        If true, make a new copy of he interval for inclusion
-       --                      into the timespan, otherwise simply include the interval
-       --
-       -- @return Id of interval being joined
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       integer,         -- time_intervals.interval_id%TYPE,
-       boolean
-)
-returns integer as '    -- time_intervals.interval_id%TYPE
-declare
-       join_interval__timespan_id     alias for $1;
-       join_interval__interval_id     alias for $2;
-       join_interval__copy_p          alias for $3; -- default true
+
+
+-- added
+select define_function_args('timespan__join_interval','timespan_id,interval_id,copy_p;true');
+
+--
+-- procedure timespan__join_interval/3
+--
+    --
+    -- Join a time interval to an existing timespan
+    --
+    -- JS: Slight changes from original
+    -- JS: Return the interval_id being joined, since it will not be the
+    -- JS: same as join_interval__interval_id if join_interval__copy_p is true
+    -- JS: The Oracle version is a procedure, so this change is completely free.
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   Id of timespan to join to
+    -- @param interval_id   Id of interval to include/copy into timespan
+    -- @param copy_p        If true, make a new copy of he interval for inclusion
+    --                      into the timespan, otherwise simply include the interval
+    --
+    -- @return Id of interval being joined
+    --
+CREATE OR REPLACE FUNCTION timespan__join_interval(
+   join_interval__timespan_id integer,
+   join_interval__interval_id integer,
+   join_interval__copy_p boolean -- default true
+
+) RETURNS integer AS $$
+-- time_intervals.interval_id%TYPE
+DECLARE
        v_interval_id                  time_intervals.interval_id%TYPE;
-begin
+BEGIN
        if join_interval__copy_p then
            v_interval_id := time_interval__copy(join_interval__interval_id);
        else
@@ -785,34 +884,40 @@ begin
        -- JS: We might as well return the interval id being joined, instead of returning a dummy integer
        return v_interval_id;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__join (
-       --
-       -- Join a new interval with start and end dates to an existing timespan
-       --
-       -- JS: Slight change from original
-       -- JS: Return the interval_id being joined (Oracle version is a procedure)
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   Id of timespan to join new interval
-       -- @param start_date    Start date of new interval to join to timespan
-       -- @param end_date      End date of new interval to join to timespan
-       --
-       -- @return Id of interval being joined
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       timestamptz,     -- time_intervals.start_date%TYPE
-       timestamptz      -- time_intervals.end_date%TYPE
-)
-returns integer as '    -- time_intervals.interval_id%TYPE
-declare
-       join__timespan_id   alias for $1;
-       join__start_date    alias for $2; -- default null,
-       join__end_date      alias for $3; -- default null
-begin
+
+
+-- added
+select define_function_args('timespan__join','timespan_id,start_date;null,end_date;null');
+
+--
+-- procedure timespan__join/3
+--
+    --
+    -- Join a new interval with start and end dates to an existing timespan
+    --
+    -- JS: Slight change from original
+    -- JS: Return the interval_id being joined (Oracle version is a procedure)
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   Id of timespan to join new interval
+    -- @param start_date    Start date of new interval to join to timespan
+    -- @param end_date      End date of new interval to join to timespan
+    --
+    -- @return Id of interval being joined
+    --
+CREATE OR REPLACE FUNCTION timespan__join(
+   join__timespan_id integer,
+   join__start_date timestamptz, -- default null,
+   join__end_date timestamptz    -- default null
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
        -- JS: This will create a new interval with start_date and end_date
        -- JS: so we might as well return the interval id 
@@ -822,35 +927,39 @@ begin
                 false
                 );
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__join (
-       --
-       -- Join a new timespan or time interval to an existing timespan
-       --
-       -- JS: Slight changes from original
-       -- JS: Return the last interval_id being joined. Although probably not useful
-       -- JS: we return the interval_id anyways to make the function consisted with
-       -- JS: the rest.  Oracle version is a procedure.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   Id of timespan to join to
-       -- @param timespan_id   Id of timespan to join from
-       --
-       -- @return Id of last interval in timespan being joined
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       integer          -- timespans.timespan_id%TYPE
-)
-returns integer as '    -- time_intervals.interval_id%TYPE
-declare
-       join__timespan_1_id   alias for $1;
-       join__timespan_2_id   alias for $2;
+
+
+--
+-- procedure timespan__join/2
+--
+    --
+    -- Join a new timespan or time interval to an existing timespan
+    --
+    -- JS: Slight changes from original
+    -- JS: Return the last interval_id being joined. Although probably not useful
+    -- JS: we return the interval_id anyways to make the function consisted with
+    -- JS: the rest.  Oracle version is a procedure.
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   Id of timespan to join to
+    -- @param timespan_id   Id of timespan to join from
+    --
+    -- @return Id of last interval in timespan being joined
+    --
+CREATE OR REPLACE FUNCTION timespan__join(
+   join__timespan_1_id integer,
+   join__timespan_2_id integer
+
+) RETURNS integer AS $$
+DECLARE
        v_interval_id          time_intervals.interval_id%TYPE;
        rec_timespan           record;
-begin
+BEGIN
        -- Loop over intervals in 2nd timespan, join with 1st.
        for rec_timespan in 
             select * 
@@ -868,28 +977,35 @@ begin
        -- JS: more than one interval joined
        return v_interval_id;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__interval_delete (
-       --
-       -- Deletes an interval from the given timespan
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   timespan to delete from
-       -- @param interval_id   delete this interval from the set
-       --
-       -- @return 0 (procedure dummy)
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       integer          -- time_intervals.interval_id%TYPE
-)
-returns integer as '
-declare
-       interval_delete__timespan_id   alias for $1;
-       interval_delete__interval_id   alias for $2;
-begin
+
+
+-- added
+select define_function_args('timespan__interval_delete','timespan_id,interval_id');
+
+--
+-- procedure timespan__interval_delete/2
+--
+    --
+    -- Deletes an interval from the given timespan
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   timespan to delete from
+    -- @param interval_id   delete this interval from the set
+    --
+    -- @return 0 (procedure dummy)
+    --
+CREATE OR REPLACE FUNCTION timespan__interval_delete(
+   interval_delete__timespan_id integer,
+   interval_delete__interval_id integer
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
 
        delete from timespans
        where timespan_id = interval_delete__timespan_id
@@ -897,28 +1013,36 @@ begin
 
        return 0;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__exists_p (
-       --
-       -- If its contained intervals are all deleted, then a timespan will
-       -- automatically be deleted.  This checks a timespan_id to make sure it is
-       -- still valid.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   id of timespan to check
-       --
-       -- @return true if interval is in timespan set, otherwise false.
-       --
-       integer        -- timespans.timespan_id%TYPE
-) 
-returns boolean as '
-declare
-       exists_p__timespan_id   alias for $1;
+
+
+-- added
+select define_function_args('timespan__exists_p','timespan_id');
+
+--
+-- procedure timespan__exists_p/1
+--
+    --
+    -- If its contained intervals are all deleted, then a timespan will
+    -- automatically be deleted.  This checks a timespan_id to make sure it is
+    -- still valid.
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   id of timespan to check
+    --
+    -- @return true if interval is in timespan set, otherwise false.
+    --
+CREATE OR REPLACE FUNCTION timespan__exists_p(
+   exists_p__timespan_id integer
+
+) RETURNS boolean AS $$
+DECLARE
        v_result         integer;
-begin
+BEGIN
        -- Only need to check if any rows exist. 
        select count(*)
        into   v_result
@@ -933,27 +1057,35 @@ begin
            return true;
        end if;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__multi_interval_p (
-       --
-       -- Checks if timespan contains more than one interval
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   id of timespan to check
-       --
-       -- @return true if timespan has more than one interval, otherwise false.
-       --
-       integer       -- timespans.timespan_id%TYPE
-)
-returns boolean as '
-declare
-       multi_interval_p__timespan_id   alias for $1;
+
+
+-- added
+select define_function_args('timespan__multi_interval_p','timespan_id');
+
+--
+-- procedure timespan__multi_interval_p/1
+--
+    --
+    -- Checks if timespan contains more than one interval
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   id of timespan to check
+    --
+    -- @return true if timespan has more than one interval, otherwise false.
+    --
+CREATE OR REPLACE FUNCTION timespan__multi_interval_p(
+   multi_interval_p__timespan_id integer
+
+) RETURNS boolean AS $$
+DECLARE
        v_result                 boolean;
-begin
-       -- ''f'' if 0 or 1 intervals, ''t'' otherwise
+BEGIN
+       -- 'f' if 0 or 1 intervals, 't' otherwise
        -- use the simple case syntax
        select (case count(timespan_id) 
                     when 0 then false
@@ -966,30 +1098,37 @@ begin
         
        return v_result;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__overlaps_interval_p (
-       --
-       -- Checks to see interval overlaps any of the intervals in the timespan. 
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   id of timespan as reference
-       -- @param timespan_id   id of timespan to check 
-       --
-       -- @return true if interval overlaps with anyinterval in timespan, otherwise false.
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       integer          -- time_intervals.interval_id%TYPE default null
-)
-returns boolean as '
-declare
-       overlaps_interval_p__timespan_id   alias for $1;
-       overlaps_interval_p__interval_id   alias for $2; -- default null
+
+
+-- added
+select define_function_args('timespan__overlaps_interval_p','timespan_id,interval_id;null');
+
+--
+-- procedure timespan__overlaps_interval_p/2
+--
+    --
+    -- Checks to see interval overlaps any of the intervals in the timespan. 
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   id of timespan as reference
+    -- @param timespan_id   id of timespan to check 
+    --
+    -- @return true if interval overlaps with anyinterval in timespan, otherwise false.
+    --
+CREATE OR REPLACE FUNCTION timespan__overlaps_interval_p(
+   overlaps_interval_p__timespan_id integer,
+   overlaps_interval_p__interval_id integer -- default null
+
+) RETURNS boolean AS $$
+DECLARE
        v_start_date               timestamptz;
        v_end_date                 timestamptz;
-begin
+BEGIN
        select start_date, end_date
        into   v_start_date, v_end_date
        from   time_intervals
@@ -1001,31 +1140,35 @@ begin
                         v_end_date
                         );
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__overlaps_p (
-       --
-       -- Checks to see if any intervals in a timespan overlap any of the intervals
-       -- in the second timespan. 
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   id of timespan as reference
-       -- @param timespan_id   id of timespan to check 
-       --
-       -- @return true if timespan overlaps with second timespan, otherwise false.
-       --
-       integer,        -- timespans.timespan_id%TYPE,
-       integer         -- timespans.timespan_id%TYPE
-)
-returns boolean as '
-declare
-       overlaps_p__timespan_1_id   alias for $1;
-       overlaps_p__timespan_2_id   alias for $2;
+
+
+-- added
+
+--
+-- procedure timespan__overlaps_p/2
+--
+    --
+    -- Checks to see if any intervals in a timespan overlap any of the intervals
+    -- in the second timespan. 
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   id of timespan as reference
+    -- @param timespan_id   id of timespan to check 
+    --
+CREATE OR REPLACE FUNCTION timespan__overlaps_p(
+   overlaps_p__timespan_1_id integer,
+   overlaps_p__timespan_2_id integer
+
+) RETURNS boolean AS $$
+DECLARE
        v_result             boolean;
        rec_timespan                 record;
-begin
+BEGIN
        -- Loop over 2nd timespan, checking each interval against 1st
        for rec_timespan in 
             select * 
@@ -1043,34 +1186,40 @@ begin
 
        return false;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__overlaps_p (
-       --
-       -- Checks to see if interval with start and end dates overlap any of the intervals
-       -- in the timespan. 
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   Id of timespan as reference
-       -- @param start_date    Start date of interval
-       -- @param end_date    End date of interval
-       --
-       -- @return true if interval with start and end dates overlaps with second timespan, otherwise false.
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       timestamptz,     -- time_intervals.start_date%TYPE
-       timestamptz      -- time_intervals.end_date%TYPE
-) 
-returns boolean as '
-declare
-       overlaps_p__timespan_id     alias for $1;
-       overlaps_p__start_date      alias for $2; -- default null,
-       overlaps_p__end_date        alias for $3; -- default null
+
+
+-- added
+select define_function_args('timespan__overlaps_p','timespan_id,start_date;null,end_date;null');
+
+--
+-- procedure timespan__overlaps_p/3
+--
+    --
+    -- Checks to see if interval with start and end dates overlap any of the intervals
+    -- in the timespan. 
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   Id of timespan as reference
+    -- @param start_date    Start date of interval
+    -- @param end_date    End date of interval
+    --
+    -- @return true if interval with start and end dates overlaps with second timespan, otherwise false.
+    --
+CREATE OR REPLACE FUNCTION timespan__overlaps_p(
+   overlaps_p__timespan_id integer,
+   overlaps_p__start_date timestamptz, -- default null,
+   overlaps_p__end_date timestamptz    -- default null
+
+) RETURNS boolean AS $$
+DECLARE
        v_result                    boolean;
        rec_timespan                record;
-begin
+BEGIN
        -- Loop over each interval in timespan, checking against dates.
        for rec_timespan in
             select * 
@@ -1090,32 +1239,39 @@ begin
 
        return false;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__copy (
-       --
-       -- Creates a new copy of a timespan, offset by optional offset
-       -- JS:  See note on intervals on time_interval__copy
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param timespan_id   Timespan to copy
-       -- @param offset        Offset al dates in timespan by this date interval
-       --
-       -- @return Id of copied timespan
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       interval 
-)
-returns integer as '    -- timespans.timespan_id%TYPE
-declare
-       copy__timespan_id        alias for $1;
-       copy__offset             alias for $2; --  default 0
+
+
+-- added
+select define_function_args('timespan__copy','timespan_id,offset');
+
+--
+-- procedure timespan__copy/2
+--
+    --
+    -- Creates a new copy of a timespan, offset by optional offset
+    -- JS:  See note on intervals on time_interval__copy
+    --
+    -- @author W. Scott Meeks
+    --
+    -- @param timespan_id   Timespan to copy
+    -- @param offset        Offset al dates in timespan by this date interval
+    --
+    -- @return Id of copied timespan
+    --
+CREATE OR REPLACE FUNCTION timespan__copy(
+   copy__timespan_id integer,
+   copy__offset interval --  default 0
+
+) RETURNS integer AS $$
+DECLARE
        rec_timespan             record;
        v_interval_id            timespans.interval_id%TYPE;
        v_timespan_id            timespans.timespan_id%TYPE;
-begin
+BEGIN
        v_timespan_id := null;
 
        -- Loop over each interval in timespan, creating a new copy
@@ -1145,56 +1301,66 @@ begin
 
        return v_timespan_id;
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
 
 
-create function timespan__copy (
-       --
-       -- Creates a new copy of a timespan, no offset
-       --
-       -- @param timespan_id   Timespan to copy
-       -- @param offset        Offset al dates in timespan by this date interval
-       --
-       -- @return Id of copied timespan
-       --
-       integer          -- timespans.timespan_id%TYPE,
-)
-returns integer as '    -- timespans.timespan_id%TYPE
-declare
-       copy__timespan_id        alias for $1;
-begin
+
+
+--
+-- procedure timespan__copy/1
+--
+    --
+    -- Creates a new copy of a timespan, no offset
+    --
+    -- @param timespan_id   Timespan to copy
+    -- @param offset        Offset al dates in timespan by this date interval
+    --
+    -- @return Id of copied timespan
+    --
+CREATE OR REPLACE FUNCTION timespan__copy(
+   copy__timespan_id integer
+
+) RETURNS integer AS $$
+-- timespans.timespan_id%TYPE
+DECLARE
+BEGIN
 
        return timespan__copy(
                     copy__timespan_id,
-                    interval ''0 days''
+                    interval '0 days'
                     );
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 
         
 
-create function timespan__copy (
-       --
-       -- Creates a new copy of a timespan, offset by optional offset
-       -- JS: Overloaded function to make above compatible with Oracle behavior
-       -- JS: when an integer (for number of days) is supplied as a parameter.
-       --
-       -- @param timespan_id   Timespan to copy
-       -- @param offset        Offset all dates in timespan by this number of days
-       --
-       -- @return Id of copied timespan
-       --
-       integer,         -- timespans.timespan_id%TYPE,
-       integer
-)
-returns integer as '    -- timespans.timespan_id%TYPE
-declare
-       copy__timespan_id        alias for $1;
-       copy__offset             alias for $2;
-begin
 
+
+--
+-- procedure timespan__copy/2
+--
+    --
+    -- Creates a new copy of a timespan, offset by optional offset
+    -- JS: Overloaded function to make above compatible with Oracle behavior
+    -- JS: when an integer (for number of days) is supplied as a parameter.
+    --
+    -- @param timespan_id   Timespan to copy
+    -- @param offset        Offset all dates in timespan by this number of days
+    --
+    -- @return Id of copied timespan
+    --
+CREATE OR REPLACE FUNCTION timespan__copy(
+   copy__timespan_id integer,
+   copy__offset integer
+
+) RETURNS integer AS $$
+DECLARE
+BEGIN
        return timespan__copy(
                     copy__timespan_id,
-                    to_interval(copy__offset,''days'')
+                    to_interval(copy__offset,'days')
                     );
 
-end;' language 'plpgsql'; 
+END;
+$$ LANGUAGE plpgsql; 

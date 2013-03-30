@@ -5,7 +5,7 @@ create or replace function acs_event__recurrence_timespan_edit (
        integer,
        timestamp,
        timestamp
-) returns integer as '
+) returns integer as $$
 DECLARE
         p_event_id                      alias for $1;
         p_start_date                    alias for $2;
@@ -51,35 +51,31 @@ BEGIN
 
         return p_event_id;
 END;
-' language 'plpgsql';
+
+$$ LANGUAGE plpgsql;
 
 
 -- to_interval() now returns 'timespan' not 'interval'
 
-create or replace function to_interval (
-       --
-       -- Convert an integer to the specified interval
-       --
-       -- Utility function so we do not have to remember how to escape
-       -- double quotes when we typecast an integer to an interval
-       --
-       -- @author jowell@jsabino.com
-       --
-       -- @param interval_number	Integer to convert to interval
-       -- @param interval_units		Interval units
-       --
-       -- @return interval equivalent of interval_number, in interval_units units
-       --       
-       integer,
-       varchar
-)
-returns interval as '	
-declare    
-       interval__number	     alias for $1;
-       interval__units	     alias for $2;
-begin
+
+
+-- added
+select define_function_args('to_interval','number,units');
+
+--
+-- procedure to_interval/2
+--
+CREATE OR REPLACE FUNCTION to_interval(
+   interval__number integer,
+   interval__units varchar
+
+) RETURNS interval AS $$
+	
+DECLARE    
+BEGIN
 
 	-- We should probably do unit checking at some point
-	return ('''''''' || interval__number || '' '' || interval__units || '''''''')::interval;
+	return ('''' || interval__number || ' ' || interval__units || '''')::interval;
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;

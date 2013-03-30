@@ -9,11 +9,10 @@ create or replace function acs_event__get_html_p (
        --
        -- @return The html_p or html_p of the activity associated with the event if html_p is null.
        --
-       integer		-- acs_events.event_id%TYPE 
+       get_html_p__event_id integer
 )
-returns boolean as '	-- acs_events.html_p%TYPE
+returns boolean as $$
 declare
-       get_html_p__event_id    alias for $1; -- in acs_events.event_id%TYPE 
        v_html_p		acs_events.html_p%TYPE; 
 begin
        select coalesce(e.html_p, a.html_p) into v_html_p
@@ -24,27 +23,25 @@ begin
 
        return v_html_p;
 
-end;' language 'plpgsql';
+end;
+$$ language plpgsql;
 
 
-create or replace function acs_event__get_status_summary (
-       --
-       -- Returns status_summary or status_summary of the activity associated with the event if 
-       -- status_summary is null.
-       --
-       -- @author W. Scott Meeks
-       --
-       -- @param event_id id of event to get status_summary for
-       --
-       -- @return The status_summary or status_summary of the activity associated with the event if status_summary is null.
-       --
-       integer		-- acs_events.event_id%TYPE 
-)
-returns boolean as '
-declare
-       get_status_summary__event_id    alias for $1; -- acs_events.event_id%TYPE 
+
+
+-- added
+select define_function_args('acs_event__get_status_summary','event_id');
+
+--
+-- procedure acs_event__get_status_summary/1
+--
+CREATE OR REPLACE FUNCTION acs_event__get_status_summary(
+   get_status_summary__event_id integer
+
+) RETURNS boolean AS $$
+DECLARE
        v_status_summary		acs_events.status_summary%TYPE; 
-begin
+BEGIN
        select coalesce(e.status_summary, a.status_summary) into v_status_summary
        from  acs_events e
        left join acs_activities a
@@ -53,5 +50,6 @@ begin
 
        return v_status_summary;
 
-end;' language 'plpgsql';
+END;
+$$ LANGUAGE plpgsql;
 
