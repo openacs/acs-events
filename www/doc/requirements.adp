@@ -112,20 +112,19 @@ number of parties.
 </p><h3>IV. Use-cases and User-scenarios</h3><p><i>Determine the types or classes of users who would use the
 system, and what their experience would be like at a high-level.
 Sketch what their experience would be like and what actions they would
-take, and how the system would support them.</i></p><h3>V. Related Links</h3><ul><li> System/Package "coversheet" TBD
+take, and how the system would support them.</i></p>
+
+<h3>V. Related Links</h3><ul><li> System/Package "coversheet" TBD
   <li> Design document TBD
   <li> Developer's guide TBD
   <li> User's guide TBD
-  <li>
-<a href="http://www.arsdigita.com/doc/calendar/">3.4 calendar
-  package documentation</a><li>
-<a href="http://www.arsdigita.com/doc/cr.html">Reservations
-  module</a><li>
+  <li> <a href="/doc/calendar/">Calendar package documentation</a>
+  <li> <a href="http://www.arsdigita.com/doc/cr.html">Reservations module</a><li>
 <a href="http://www.arsdigita.com/ad-training/acs40-training">Problem
-  Set 2 revised for ACS 4.0</a><li> Test plan TBD
-</li>
-</li>
+  Set 2 revised for ACS 4.0</a>
+  <li> Test plan TBD</li>
 </ul>
+
 <h3>VI.A Data Model Requirements</h3><p><b>10.10 Events</b></p><p>
 <b>10.10.10</b> The data model represents activities associated with sets
 of time intervals.  

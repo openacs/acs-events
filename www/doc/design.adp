@@ -7,10 +7,14 @@
 <h2>ACS Events Design Documentation</h2>
 by <a href="mailto:smeeks@arsdigita.com">W. Scott Meeks</a><hr><h3>I.  Essentials</h3><ul>
 <li> Tcl script directory (link to the API browser page for the package)  </li><li> PL/SQL file (link to the API browser page for the package)  </li><li> Data model: <a href="/doc/sql/display-sql?url=acs-events-create.sql&amp;package_key=acs-events">acs-events-create.sql</a>
-</li><p>
-<li><a href="requirements.html">Requirements document</a></li><li> ER diagram </li><li> Transaction flow diagram </li>
+</li>
+<li><a href="requirements">Requirements document</a></li>
+<li> ER diagram </li>
+<li> Transaction flow diagram </li>
 </p>
-</ul><h3>II.  Introduction</h3><p>
+</ul>
+
+<h3>II.  Introduction</h3><p>
 The ACS events service is primarily intended for use by writers of
 application packages and other service packages. The service allows
 developers to specify and manipulate relationships (possibly
@@ -57,7 +61,9 @@ is done by only partially populating the recurrences for certain
 events.  The service also provides a view which simplifies querying to
 find partially populated recurring events that need recurrences added
 to the DB.
-</p><h3>III.  Historical Considerations</h3><p>
+</p>
+
+<h3>III.  Historical Considerations</h3><p>
 There are number of historical considerations surrounding the
 design of recurring events.  Much of the current design can be traced
 pack to the original <a href="http://www.arsdigita.com/doc/calendar/design.html">ACS 3.4
