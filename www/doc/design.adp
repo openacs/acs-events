@@ -17,10 +17,10 @@ acs-events-create.sql</a>
 <p>The ACS events service is primarily intended for use by writers
 of application packages and other service packages. The service
 allows developers to specify and manipulate relationships (possibly
-recurring) between a <i>set of intervals in time</i>, an
-<i>activity</i>, and an arbitrary number of <i>parties</i>. An
+recurring) between a <em>set of intervals in time</em>, an
+<em>activity</em>, and an arbitrary number of <em>parties</em>. An
 activity can be associated with an arbitrary number of ACS
-<i>objects</i>.</p>
+<em>objects</em>.</p>
 <p>The package doesn't provide for any interpretation of events,
 leaving that up to the applications that use the service. In
 particular, the package assumes that permissioning, and the related
@@ -36,23 +36,23 @@ events, time intervals, activities, and recurrences. The package
 meets the requirements for each of these areas in the following
 ways:</p>
 <p>
-<b>Events:</b> The service creates a new subtype of acs_object:
+<strong>Events:</strong> The service creates a new subtype of acs_object:
 acs_event. It creates an auxiliary table for mapping events to
 parties. It provides an API for manipulating and querying events
 and their associated time interval sets, activities, recurrences,
 and parties.</p>
 <p>
-<b>Time Intervals:</b> The service creates tables for storing
+<strong>Time Intervals:</strong> The service creates tables for storing
 time intervals and sets of time intervals. It provides an API for
 manipulating and querying time intervals and time interval
 sets.</p>
 <p>
-<b>Activities:</b> The service creates a new subtype of
+<strong>Activities:</strong> The service creates a new subtype of
 acs_object: acs_activity. It creates an auxiliary table for mapping
 activities to objects. It provides an API for manipulating
 activities, their properties, and their associated objects.</p>
 <p>
-<b>Recurrences:</b> The service creates a table for storing
+<strong>Recurrences:</strong> The service creates a table for storing
 information on how an event recurs, including how the event recurs
 and when it stops recurring. It provides an API for manipulating
 recurrence information and recurring events. This includes a
@@ -123,15 +123,15 @@ seems to have no lower limit, but an upper limit of 2031.</p>
 <p>The 4.0 ACS Events service doesn't enforce a particular policy
 to prevent problems, but it does provide mechanisms that a
 well-designed application can use. The keys are the
-<b>event_recurrence.insert_events</b> procedure and the
-<b>partially_populated_events</b> view.</p>
+<strong>event_recurrence.insert_events</strong> procedure and the
+<strong>partially_populated_events</strong> view.</p>
 <p>
-<b>insert_events</b> takes either an event_id or a recurrence_id
+<strong>insert_events</strong> takes either an event_id or a recurrence_id
 and a cutoff date. It either uses the recurrence_id, or gets it
 from the event_id, to retrieve the information needed to generate
 the dates of the recurrences. When inserting a recurring event for
 the first time, the application will need to call
-<b>insert_events</b> with a reasonable populate_until date. For
+<strong>insert_events</strong> with a reasonable populate_until date. For
 calendar, for example, this could be sysdate + the lookahead
 limit.</p>
 <p>It is the application's responsibility to determine if
@@ -161,7 +161,7 @@ intervals is guaranteed to be a positive integer.</p>
 <p>For the days_of_week column, the representation chosen, a
 space-delimited list of integers, has a number of advantages.
 First, it is easy and reasonably efficient to generate the set of
-dates corresponding to the recurrences. <b>insert_events</b> takes
+dates corresponding to the recurrences. <strong>insert_events</strong> takes
 each number in the list in turn and adds it to the date of the
 beginning of the week. Second, the Tcl and Oracle representations
 are equivalent and the translations to and from UI are
