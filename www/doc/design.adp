@@ -21,13 +21,13 @@ recurring) between a <em>set of intervals in time</em>, an
 <em>activity</em>, and an arbitrary number of <em>parties</em>. An
 activity can be associated with an arbitrary number of ACS
 <em>objects</em>.</p>
-<p>The package doesn't provide for any interpretation of events,
-leaving that up to the applications that use the service. In
-particular, the package assumes that permissioning, and the related
-concept of approval, will be handled by the application. Similarly,
-notification is also the responsibility of the application (but
-probably via another service package.) Likewise, the package
-provides no UI support.</p>
+<p>The package doesn't provide for any interpretation of
+events, leaving that up to the applications that use the service.
+In particular, the package assumes that permissioning, and the
+related concept of approval, will be handled by the application.
+Similarly, notification is also the responsibility of the
+application (but probably via another service package.) Likewise,
+the package provides no UI support.</p>
 <p>Possible application domains include include calendaring, room
 reservation, scheduling, project management, and event
 registration.</p>
@@ -36,32 +36,32 @@ events, time intervals, activities, and recurrences. The package
 meets the requirements for each of these areas in the following
 ways:</p>
 <p>
-<strong>Events:</strong> The service creates a new subtype of acs_object:
-acs_event. It creates an auxiliary table for mapping events to
-parties. It provides an API for manipulating and querying events
-and their associated time interval sets, activities, recurrences,
-and parties.</p>
+<strong>Events:</strong> The service creates a new subtype of
+acs_object: acs_event. It creates an auxiliary table for mapping
+events to parties. It provides an API for manipulating and querying
+events and their associated time interval sets, activities,
+recurrences, and parties.</p>
 <p>
-<strong>Time Intervals:</strong> The service creates tables for storing
-time intervals and sets of time intervals. It provides an API for
-manipulating and querying time intervals and time interval
+<strong>Time Intervals:</strong> The service creates tables for
+storing time intervals and sets of time intervals. It provides an
+API for manipulating and querying time intervals and time interval
 sets.</p>
 <p>
-<strong>Activities:</strong> The service creates a new subtype of
-acs_object: acs_activity. It creates an auxiliary table for mapping
-activities to objects. It provides an API for manipulating
+<strong>Activities:</strong> The service creates a new subtype
+of acs_object: acs_activity. It creates an auxiliary table for
+mapping activities to objects. It provides an API for manipulating
 activities, their properties, and their associated objects.</p>
 <p>
-<strong>Recurrences:</strong> The service creates a table for storing
-information on how an event recurs, including how the event recurs
-and when it stops recurring. It provides an API for manipulating
-recurrence information and recurring events. This includes a
-function to insert event recurrences in such a way as to reasonably
-limit the amount of information stored in the DB for a particular
-event. This is done by only partially populating the recurrences
-for certain events. The service also provides a view which
-simplifies querying to find partially populated recurring events
-that need recurrences added to the DB.</p>
+<strong>Recurrences:</strong> The service creates a table for
+storing information on how an event recurs, including how the event
+recurs and when it stops recurring. It provides an API for
+manipulating recurrence information and recurring events. This
+includes a function to insert event recurrences in such a way as to
+reasonably limit the amount of information stored in the DB for a
+particular event. This is done by only partially populating the
+recurrences for certain events. The service also provides a view
+which simplifies querying to find partially populated recurring
+events that need recurrences added to the DB.</p>
 <h3>III. Historical Considerations</h3>
 <p>There are number of historical considerations surrounding the
 design of recurring events. Much of the current design can be
@@ -90,8 +90,8 @@ queries can pull all the relevant items out at once and can take
 advantage of the index on the start_date column to optimize the
 query. With the stored proc, it would be necessary to iterate over
 each day (up to 42 in the month view), calling the check repeat
-proc for each base repeating item who's repeat_until date was still
-relevant, and then effectively constructing the item to be
+proc for each base repeating item who's repeat_until date was
+still relevant, and then effectively constructing the item to be
 displayed.</p>
 <p>Another reason is that the first approach, to insert only a
 single row, seems to require a significantly more complex design.
@@ -100,9 +100,9 @@ be greater. It becomes even more complex when you allow exceptions.
 Now you need to maintain a separate table of exceptions and it
 becomes necessary to check through the exceptions table every time
 the check repeat proc is called. It the worst case, every
-recurrence is an exception, so you're essentially back to 1 row per
-recurrence, plus all the added complexity of using the check repeat
-proc.</p>
+recurrence is an exception, so you're essentially back to 1 row
+per recurrence, plus all the added complexity of using the check
+repeat proc.</p>
 <p>This is not an unreasonable possibility and is in fact how Sloan
 operates. Each class is represented as a recurring item and it is
 very common for each instance to have a different set of files
@@ -120,20 +120,20 @@ default is 10 years.) This seemed reasonable given that other
 systems seem to have arbitrary, implementation driven limits. Yahoo
 and Excite have arbitrary limits between about 1970 and 2030. Palm
 seems to have no lower limit, but an upper limit of 2031.</p>
-<p>The 4.0 ACS Events service doesn't enforce a particular policy
-to prevent problems, but it does provide mechanisms that a
+<p>The 4.0 ACS Events service doesn't enforce a particular
+policy to prevent problems, but it does provide mechanisms that a
 well-designed application can use. The keys are the
 <strong>event_recurrence.insert_events</strong> procedure and the
 <strong>partially_populated_events</strong> view.</p>
 <p>
-<strong>insert_events</strong> takes either an event_id or a recurrence_id
-and a cutoff date. It either uses the recurrence_id, or gets it
-from the event_id, to retrieve the information needed to generate
-the dates of the recurrences. When inserting a recurring event for
-the first time, the application will need to call
-<strong>insert_events</strong> with a reasonable populate_until date. For
-calendar, for example, this could be sysdate + the lookahead
-limit.</p>
+<strong>insert_events</strong> takes either an event_id or a
+recurrence_id and a cutoff date. It either uses the recurrence_id,
+or gets it from the event_id, to retrieve the information needed to
+generate the dates of the recurrences. When inserting a recurring
+event for the first time, the application will need to call
+<strong>insert_events</strong> with a reasonable populate_until
+date. For calendar, for example, this could be sysdate + the
+lookahead limit.</p>
 <p>It is the application's responsibility to determine if
 additional events need to be inserted into the DB to support the
 date being used in a query to view events. The application can do
@@ -152,22 +152,23 @@ calendar was based on the Palm DateBook which seemed fairly
 inclusive (covering both Yahoo Calendar and Excite Planner) though
 it didn't capture some of the more esoteric cases covered by
 Outlook or (particuarly) Lotus Notes. The Events service maintains
-the original choices, but adds an additional choice, 'custom',
-which, when combined with the custom_func column, allows an
-application to generate an arbitrary recurrence function. The
-function must take a date and a number of intervals as arguments
-and return a new date greater than the given date. The number of
-intervals is guaranteed to be a positive integer.</p>
+the original choices, but adds an additional choice,
+'custom', which, when combined with the custom_func column,
+allows an application to generate an arbitrary recurrence function.
+The function must take a date and a number of intervals as
+arguments and return a new date greater than the given date. The
+number of intervals is guaranteed to be a positive integer.</p>
 <p>For the days_of_week column, the representation chosen, a
 space-delimited list of integers, has a number of advantages.
 First, it is easy and reasonably efficient to generate the set of
-dates corresponding to the recurrences. <strong>insert_events</strong> takes
-each number in the list in turn and adds it to the date of the
-beginning of the week. Second, the Tcl and Oracle representations
-are equivalent and the translations to and from UI are
-straightforward. In particular, the set of checkboxes corresponding
-to days of the week are converted directly into a Tcl list which
-can be stored directly into the DB.</p>
+dates corresponding to the recurrences.
+<strong>insert_events</strong> takes each number in the list in
+turn and adds it to the date of the beginning of the week. Second,
+the Tcl and Oracle representations are equivalent and the
+translations to and from UI are straightforward. In particular, the
+set of checkboxes corresponding to days of the week are converted
+directly into a Tcl list which can be stored directly into the
+DB.</p>
 <h3>IV. Competitive Analysis</h3>
 <p>Since this is a low level service package, there is no direct
 competition.</p>
@@ -210,37 +211,38 @@ interval sets, activities, and recurrences. At present, there is no
 Tcl API, but if desired one could be added consisting primarily of
 wrappers around PL/SQL functions and procedures.</p>
 <h4>Events</h4>
-<p>This is the main abstraction in the package. <tt>acs_event</tt>
-is a subtype of <tt>acs_object</tt>. In addition to the
-<tt>acs_events</tt> table, there is an <tt>acs_event_party_map</tt>
-table which maps between parties and events. The <tt>acs_event</tt>
-package defines <tt>new</tt>, <tt>delete</tt>, various procedures
-to set attributes and <tt>recurs_p</tt> indicating whether or not a
-particular event recurs.</p>
+<p>This is the main abstraction in the package.
+<kbd>acs_event</kbd> is a subtype of <kbd>acs_object</kbd>. In
+addition to the <kbd>acs_events</kbd> table, there is an
+<kbd>acs_event_party_map</kbd> table which maps between parties and
+events. The <kbd>acs_event</kbd> package defines <kbd>new</kbd>,
+<kbd>delete</kbd>, various procedures to set attributes and
+<kbd>recurs_p</kbd> indicating whether or not a particular event
+recurs.</p>
 <h4>Time Interval Sets</h4>
 <p>Because time interval sets are so simple, there is no need to
-make them a subtype of <tt>acs_object</tt>. Interval sets are
+make them a subtype of <kbd>acs_object</kbd>. Interval sets are
 represented with one table to represent time intervals, and a
 second table which groups intervals into sets, with corresponding
-PL/SQL packages defining <tt>new</tt>, <tt>delete</tt>, and
+PL/SQL packages defining <kbd>new</kbd>, <kbd>delete</kbd>, and
 additional manipulation functions.</p>
 <h4>Activities</h4>
 <p>This is the secondary abstraction in the package.
-<tt>acs_activity</tt> is a subtype of <tt>acs_object</tt>. In
-addition to the <tt>acs_activities</tt> table, there is an
-<tt>acs_activity_object_map</tt> table which maps between objects
-and activities. The <tt>acs_activity</tt> package defines
-<tt>new</tt>, <tt>delete</tt>, and various procedures to set
+<kbd>acs_activity</kbd> is a subtype of <kbd>acs_object</kbd>. In
+addition to the <kbd>acs_activities</kbd> table, there is an
+<kbd>acs_activity_object_map</kbd> table which maps between objects
+and activities. The <kbd>acs_activity</kbd> package defines
+<kbd>new</kbd>, <kbd>delete</kbd>, and various procedures to set
 attributes and mappings.</p>
 <h4>Recurrences</h4>
 <p>Since recurrences are always associated with events, there
 seemed to be no need to make them objects. The information that
 determines how an event recurs is stored in the
-<tt>event_recurrences</tt> table.</p>
-<p>The <tt>event_recurrence</tt> package defines <tt>new</tt>,
-<tt>delete</tt>, and other procedures related to recurrences. The
-key procedure is <tt>insert_events</tt>.</p>
-<p>A view, <tt>partially_populated_events</tt>, is created which
+<kbd>event_recurrences</kbd> table.</p>
+<p>The <kbd>event_recurrence</kbd> package defines <kbd>new</kbd>,
+<kbd>delete</kbd>, and other procedures related to recurrences. The
+key procedure is <kbd>insert_events</kbd>.</p>
+<p>A view, <kbd>partially_populated_events</kbd>, is created which
 hides some of the details of retrieving recurrences that need to
 populated further.</p>
 <!--
@@ -298,8 +300,8 @@ mentioned. </li>
 details here. You could also comment on non-functional improvements
 to the package, such as usability.</p>
 <p>Note that a careful treatment of the earlier "competitive
-analysis" section can greatly facilitate the documenting of this
-section.</p>
+analysis" section can greatly facilitate the documenting of
+this section.</p>
 <h3>XI. Authors</h3>
 <ul>
 <li>System owner: <a href="mailto:smeeks\@arsdigita.com">W. Scott
