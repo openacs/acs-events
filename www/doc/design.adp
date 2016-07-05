@@ -21,7 +21,7 @@ recurring) between a <em>set of intervals in time</em>, an
 <em>activity</em>, and an arbitrary number of <em>parties</em>. An
 activity can be associated with an arbitrary number of ACS
 <em>objects</em>.</p>
-<p>The package doesn't provide for any interpretation of
+<p>The package doesn&#39;t provide for any interpretation of
 events, leaving that up to the applications that use the service.
 In particular, the package assumes that permissioning, and the
 related concept of approval, will be handled by the application.
@@ -90,7 +90,7 @@ queries can pull all the relevant items out at once and can take
 advantage of the index on the start_date column to optimize the
 query. With the stored proc, it would be necessary to iterate over
 each day (up to 42 in the month view), calling the check repeat
-proc for each base repeating item who's repeat_until date was
+proc for each base repeating item who&#39;s repeat_until date was
 still relevant, and then effectively constructing the item to be
 displayed.</p>
 <p>Another reason is that the first approach, to insert only a
@@ -100,7 +100,7 @@ be greater. It becomes even more complex when you allow exceptions.
 Now you need to maintain a separate table of exceptions and it
 becomes necessary to check through the exceptions table every time
 the check repeat proc is called. It the worst case, every
-recurrence is an exception, so you're essentially back to 1 row
+recurrence is an exception, so you&#39;re essentially back to 1 row
 per recurrence, plus all the added complexity of using the check
 repeat proc.</p>
 <p>This is not an unreasonable possibility and is in fact how Sloan
@@ -120,7 +120,7 @@ default is 10 years.) This seemed reasonable given that other
 systems seem to have arbitrary, implementation driven limits. Yahoo
 and Excite have arbitrary limits between about 1970 and 2030. Palm
 seems to have no lower limit, but an upper limit of 2031.</p>
-<p>The 4.0 ACS Events service doesn't enforce a particular
+<p>The 4.0 ACS Events service doesn&#39;t enforce a particular
 policy to prevent problems, but it does provide mechanisms that a
 well-designed application can use. The keys are the
 <strong>event_recurrence.insert_events</strong> procedure and the
@@ -134,7 +134,7 @@ event for the first time, the application will need to call
 <strong>insert_events</strong> with a reasonable populate_until
 date. For calendar, for example, this could be sysdate + the
 lookahead limit.</p>
-<p>It is the application's responsibility to determine if
+<p>It is the application&#39;s responsibility to determine if
 additional events need to be inserted into the DB to support the
 date being used in a query to view events. The application can do
 this by querying on partially_populated_events, using the date in
@@ -150,7 +150,7 @@ instances.</p>
 event_recurrence.interval_type. The original choice for the 3.4
 calendar was based on the Palm DateBook which seemed fairly
 inclusive (covering both Yahoo Calendar and Excite Planner) though
-it didn't capture some of the more esoteric cases covered by
+it didn&#39;t capture some of the more esoteric cases covered by
 Outlook or (particuarly) Lotus Notes. The Events service maintains
 the original choices, but adds an additional choice,
 'custom', which, when combined with the custom_func column,
@@ -254,7 +254,7 @@ populated further.</p>
 Remember that the correctness, completeness, and stability of the API
 and interface are what experienced members of our audience are looking
 for.  This is a cultural shift for us at aD (as of mid-year 2000), in
-that we've previously always looked at the data models as key, and
+that we&#39;ve previously always looked at the data models as key, and
 seldom spent much effort on the API (e.g. putting raw SQL in pages to
 handle transactions, instead of encapsulating them via procedures).
 Experience has taught us that we need to focus on the API for

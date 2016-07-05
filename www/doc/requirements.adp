@@ -29,7 +29,7 @@ provide for custom recurrences.</p>
 of business advantages:</p>
 <ul>
 <li>It saves work and increases quality; applications that deal
-with time don't have to "re-invent the wheel" but
+with time don&#39;t have to "re-invent the wheel" but
 instead can use a common, tested code base.</li><li>It improves consistency; the same API will be used in different
 applications.</li><li>It simplifies integration; since a common data model is used to
 represent events, different applications can more easily share
@@ -37,13 +37,13 @@ related information.</li>
 </ul>
 <p>For example, the events service could support a room reservation
 application that is integrated with an application which maintains
-users's personal and group calendars. Suppose Stephanie uses
+users&#39;s personal and group calendars. Suppose Stephanie uses
 the room reservation application to reserve the Boston 1st floor
 conference room on 11/11 from 1pm to 2pm for Ern, Allen, and Alan.
 The events service will add a new event for this time slot, add a
 mapping to Ern, Allen, and Alan, and an activity for the meeting.
 This activity will map to the conference room. Now to get a
-calendar item to appear on Ern, Allen, and Alan's calendars,
+calendar item to appear on Ern, Allen, and Alan&#39;s calendars,
 the reservation application can simply pass the event to the
 calendar application which adds a mapping between the activity and
 a new calendar item.</p>
@@ -114,7 +114,7 @@ Sketch what their experience would be like and what actions they
 would take, and how the system would support them.</em></p>
 <h3>V. Related Links</h3>
 <ul>
-<li>System/Package "coversheet" TBD</li><li>Design document TBD</li><li>Developer's guide TBD</li><li>User's guide TBD</li><li><a href="http://www.arsdigita.com/doc/calendar/">3.4 calendar
+<li>System/Package "coversheet" TBD</li><li>Design document TBD</li><li>Developer&#39;s guide TBD</li><li>User&#39;s guide TBD</li><li><a href="http://www.arsdigita.com/doc/calendar/">3.4 calendar
 package documentation</a></li><li><a href="http://www.arsdigita.com/doc/cr.html">Reservations
 module</a></li><li><a href="http://www.arsdigita.com/ad-training/acs40-training">Problem Set 2
 revised for ACS 4.0</a></li><li>Test plan TBD</li>
@@ -198,7 +198,7 @@ thousands of rows representing a single recurring event, even if it
 recurs indefinitely.</p>
 <p>
 <strong>10.50.120</strong> The service should provide a view for
-querying on those recurrences that aren't fully populated in
+querying on those recurrences that aren&#39;t fully populated in
 the DB.</p>
 <h3>VI.B API Requirements</h3>
 <p><strong>20.10 Event API</strong></p>
