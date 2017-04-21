@@ -151,7 +151,7 @@ event_recurrence.interval_type. The original choice for the 3.4
 calendar was based on the Palm DateBook which seemed fairly
 inclusive (covering both Yahoo Calendar and Excite Planner) though
 it didn&#39;t capture some of the more esoteric cases covered by
-Outlook or (particuarly) Lotus Notes. The Events service maintains
+Outlook or (particularly) Lotus Notes. The Events service maintains
 the original choices, but adds an additional choice,
 'custom', which, when combined with the custom_func column,
 allows an application to generate an arbitrary recurrence function.

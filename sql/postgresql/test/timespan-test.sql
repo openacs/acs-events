@@ -210,7 +210,7 @@ DECLARE
 	v_interval_id_cp		 time_intervals.interval_id%TYPE;
 BEGIN
 
-	-- Get interval id of orginal interval (before join)
+	-- Get interval id of original interval (before join)
 	select interval_id into v_interval_id
 	from timespans
 	where timespan_id = join_interval__timespan_id;
