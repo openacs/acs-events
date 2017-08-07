@@ -135,7 +135,7 @@ DECLARE
        v_ref_dow		integer;
        v_add_days		integer;
 BEGIN
-	-- I cant find a function that converts days of the week to
+	-- I can't find a function that converts days of the week to
 	-- the corresponding integer value, so I roll my own (above)
 	-- We avoid extract(dow from timestamp) because of incompatible output with to_char.
 	v_ref_dow := dow_to_int(next_day__weekday);

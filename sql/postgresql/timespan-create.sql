@@ -634,7 +634,7 @@ create index timespans_idx on timespans(timespan_id);
 
 -- This is important to prevent locking on update of master table.
 -- See  http://www.arsdigita.com/bboard/q-and-a-fetch-msg.tcl?msg_id=000KOh
--- JS: Not sure if this applies to PostgreSQL, but an index cant hurt, can it?
+-- JS: Not sure if this applies to PostgreSQL, but an index can't hurt, can it?
 create index timespans_interval_id_idx on timespans(interval_id);
 
 comment on table timespans is '
@@ -790,7 +790,7 @@ BEGIN
 
        -- JS: If we simply call timespan__new with default copy_p = true,
        -- JS: there will be two new time intervals that will be created
-       -- JS: everytime this function is called. The first one will never be used!!! 
+       -- JS: every time this function is called. The first one will never be used!!! 
        -- JS: To fix, we use the timespan__new with copy_p parameter and
        -- JS: setting copy_p to false.
        return timespan__new(time_interval__new(new__start_date, new__end_date),false);

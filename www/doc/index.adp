@@ -1,20 +1,15 @@
 
-<property name="context">"ACS Events"</property>
+<property name="context">{/doc/acs-events {ACS Events}} {ACS Events Documentation}</property>
 <property name="doc(title)">ACS Events Documentation</property>
 <master>
+<h1>ACS Events Documentation</h1>
 
-<body bgcolor="#ffffff">
-<h2>ACS Events Documentation</h2>
-
-by <a href="mailto:wsmeeks@arsdigita.com">wsmeeks@arsdigita.com</a><hr><h3>Engineering Docs</h3>
-
+by <a href="mailto:wsmeeks\@arsdigita.com">wsmeeks\@arsdigita.com</a>
+<h2>Engineering Docs</h2>
 <ul>
-<li><a href="requirements">Requirements</a>
-<li><a href="design">Design</a></li>
-</li>
+<li><a href="requirements">Requirements</a></li><li><a href="design">Design</a></li>
 </ul>
-
-<h3>Release Notes</h3><p>Please file bugs in the <a href="http://openacs.org/bugtracker/openacs/">Bug Tracker</a>.
-</p><hr><address>wsmeeks@arsdigita.com</address>
-</ul>
-</body>
+<h2>Release Notes</h2>
+<p>Please file bugs in the <a href="http://openacs.org/bugtracker/openacs/">Bug Tracker</a>.</p>
+<hr>
+<address>wsmeeks\@arsdigita.com</address>
