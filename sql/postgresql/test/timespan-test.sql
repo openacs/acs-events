@@ -174,7 +174,7 @@ BEGIN
 	-- JS: Aha, a demonstration of the effect of transactions to foreign keys
 	-- JS: It seems that while timespan__delete would remove the row from
 	-- JS: time_intervals, the cascade delete removal of the corresponding row
-	-- JS: in timespans is not yet done until the transation is complete.  Thus,
+	-- JS: in timespans is not yet done until the transaction is complete.  Thus,
 	-- JS: deleting the row in the shadow table within this function/transaction 
 	-- JS: will cause the comparison of the timespans table and the shadow table 
 	-- JS: to fail (since delete will immediately remove the row from the shadow 

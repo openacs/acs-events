@@ -209,7 +209,7 @@ CREATE OR REPLACE FUNCTION ut_assert__eq(
    eq__check_this boolean,
    eq__against_this boolean,
    eq__null_ok boolean,  -- default false
-   eq__raise_exc boolean -- defualt false
+   eq__raise_exc boolean -- default false
 
 ) RETURNS integer AS $$
 DECLARE
