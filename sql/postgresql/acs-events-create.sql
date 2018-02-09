@@ -261,10 +261,12 @@ create table acs_events (
 
 -- This is important to prevent locking on update of master table.
 -- See  http://www.arsdigita.com/bboard/q-and-a-fetch-msg.tcl?msg_id=000KOh
-create index acs_events_activity_id_ids on acs_events(activity_id);
+create index acs_events_activity_id_idx on acs_events(activity_id);
 
 -- This is useful for looking up instances of an event
 create index acs_events_recurrence_id_idx on acs_events(recurrence_id);
+
+create index acs_events_timespan_id_idx on acs_events(timespan_id);
 
 comment on table acs_events is '
     A relationship between a time span and an activity.
