@@ -16,7 +16,7 @@ BEGIN
 	raise notice 'Setting up acs-events-test...';
 
 	-- create copies of the tables
-	-- No need for excute here?
+	-- No need for execute here?
 	create table ut_acs_events as
 		  select * from acs_events;
 	create table ut_acs_event_party_map as

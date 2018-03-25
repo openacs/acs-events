@@ -83,7 +83,7 @@ create table recurrences (
 create index recurrences_interval_type_idx on recurrences(interval_type);
 
 comment on table recurrences is '
-    Desribes how an event recurs.
+    Describes how an event recurs.
 ';
 
 comment on column recurrences.interval_type is '
