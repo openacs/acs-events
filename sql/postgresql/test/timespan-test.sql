@@ -27,7 +27,7 @@ BEGIN
 				    'ut_timespans'
 				    );
 
-	-- Store keys that are in the table prior to the regresion test
+	-- Store keys that are in the table prior to the regression test
 	create table ut_interval_ids as select interval_id from time_intervals;
 	create table ut_timespan_ids as select timespan_id from timespans;
 
