@@ -153,7 +153,7 @@ BEGIN
 
         -- JS: I hate deeply nested if-else-ifs!!! 
 
-        -- Null for start_date or end_date means dont change.
+        -- Null for start_date or end_date means don't change.
         if edit__start_date is not null and edit__end_date is not null then
             update time_intervals
             set    start_date  = edit__start_date,

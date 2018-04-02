@@ -40,7 +40,7 @@ BEGIN
 		'1',
 		'0',
 		'f',
-		'f' -- we dont want to raise an exception here
+		'f' -- we don't want to raise an exception here
 		);
 
 
