@@ -188,7 +188,22 @@ BEGIN
         null,				-- sort_order (default)
         'type_specific',		-- storage (default)
         'f'				-- static_p (default)
-    ); 
+    );
+    attr_id := acs_attribute__create_attribute ( 
+        'acs_event',	     -- object_type
+        'location',          -- attribute_name
+        'string',	     -- datatype
+        'Location',          -- pretty_name
+        'Locations',         -- pretty_plural
+        null,		     -- table_name (default)
+        null,		     -- column_name (default)
+        null,		     -- default_value (default)
+        1,		     -- min_n_values (default)
+        1,		     -- max_n_values (default)
+        null,		     -- sort_order (default)
+        'type_specific',     -- storage (default)
+        'f'		     -- static_p (default)
+    );     
 
     return 0;
 
@@ -223,10 +238,10 @@ create table acs_events (
     html_p              boolean,
     status_summary	varchar(255),
     --
-    -- The following three columns encapsulate the remaining attributes of an Event: 
+    -- The following four columns encapsulate the remaining attributes of an Event: 
     -- the activity that takes place during the event, its timespan (a collection of time 
     -- intervals during which the event occurs), and an optional recurrence specification 
-    -- that identifies how events repeat in time.
+    -- that identifies how events repeat in time, and its location.
     --
     activity_id         integer
                         constraint acs_events_activity_id_fk
@@ -240,6 +255,7 @@ create table acs_events (
     recurrence_id       integer
                         constraint acs_events_recurrence_id_fk
                         references recurrences,
+    location            varchar(255),
     --
     -- a link which points to a page related to the event
     -- this could be either additional detail or a substitution
@@ -290,6 +306,10 @@ comment on column acs_events.status_summary is '
 
 comment on column acs_events.timespan_id is '
     The time span associated with this event.
+';
+
+comment on column acs_events.location is '
+    The location associated with this event.
 ';
 
 comment on column acs_events.activity_id is '
@@ -345,7 +365,8 @@ select event_id,
        coalesce(e.status_summary, a.status_summary) as status_summary,
        e.activity_id,
        timespan_id,
-       recurrence_id
+       recurrence_id,
+       location
 from   acs_events e,
        acs_activities a
 where  e.activity_id = a.activity_id;
@@ -449,10 +470,10 @@ $$ LANGUAGE plpgsql;
 
 
 -- added
-select define_function_args('acs_event__new','event_id;null,name;null,description;null,html_p;null,status_summary;null,timespan_id;null,activity_id;null,recurrence_id;null,object_type;acs_event,creation_date;now(),creation_user;null,creation_ip;null,context_id;null,package_id;null');
+select define_function_args('acs_event__new','event_id;null,name;null,description;null,html_p;null,status_summary;null,timespan_id;null,activity_id;null,recurrence_id;null,object_type;acs_event,creation_date;now(),creation_user;null,creation_ip;null,context_id;null,package_id;null,location;null');
 
 --
--- procedure acs_event__new/14
+-- procedure acs_event__new/14-15
 
      -- Creates a new event (20.10.10)
      --
@@ -471,6 +492,8 @@ select define_function_args('acs_event__new','event_id;null,name;null,descriptio
      -- @param creation_user     acs_object param
      -- @param creation_ip       acs_object param
      -- @param context_id        acs_object param
+     -- @param package_id        acs_object param
+     -- @param location          location
      --
      -- @return The id of the new event.
 
@@ -488,7 +511,8 @@ CREATE OR REPLACE FUNCTION acs_event__new(
    new__creation_user integer,     -- default null,
    new__creation_ip varchar,       -- default null,
    new__context_id integer,        -- default null
-   new__package_id integer         -- default null
+   new__package_id integer,        -- default null
+   new__location varchar default NULL
 
 ) RETURNS integer AS $$
 	-- acs_events.event_id%TYPE
@@ -508,10 +532,11 @@ BEGIN
 	    );
 
        insert into acs_events
-            (event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id)
+            (event_id, name, description, html_p, status_summary,
+	    activity_id, timespan_id, recurrence_id, location)
        values
-            (v_event_id, new__name, new__description, new__html_p, new__status_summary, new__activity_id, new__timespan_id,
-             new__recurrence_id);
+            (v_event_id, new__name, new__description, new__html_p, new__status_summary,
+	    new__activity_id, new__timespan_id, new__recurrence_id, new__location);
 
        return v_event_id;
 
@@ -521,8 +546,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('acs_event__delete','event_id');
 
 --
 -- procedure acs_event__delete/1
@@ -537,6 +560,8 @@ select define_function_args('acs_event__delete','event_id');
        -- @param event_id id of event to delete
        --
        -- @return 0 (procedure dummy)
+       
+select define_function_args('acs_event__delete','event_id');
 
 CREATE OR REPLACE FUNCTION acs_event__delete(
    delete__event_id integer
@@ -1100,9 +1125,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('acs_event__new_instance','event_id,date_offset');
-
 --
 -- procedure acs_event__new_instance/2
 --
@@ -1157,8 +1179,9 @@ BEGIN
 	    now(),		      -- creation_date (default)
             object_row.creation_user, -- creation_user
             object_row.creation_ip,   -- creation_ip
-            object_row.context_id,     -- context_id
-            object_row.package_id     -- context_id
+            object_row.context_id,    -- context_id
+            object_row.package_id,    -- package_id
+	    event_row.location        -- location
 	    );
 
       return v_event_id;

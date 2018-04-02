@@ -100,7 +100,15 @@ begin
         pretty_name    => 'Redirect to Related Link?', 
         pretty_plural  => '', 
         datatype       => 'string' 
-    ); 
+    );
+    attr_id := acs_attribute.create_attribute ( 
+        object_type    => 'acs_event', 
+        attribute_name => 'location', 
+        pretty_name    => 'Location', 
+        pretty_plural  => 'Locations', 
+        datatype       => 'string' 
+    );
+
 end;
 /
 show errors
@@ -130,10 +138,10 @@ create table acs_events (
                         constraint acs_events_html_p_ck check(html_p in ('t','f')),
     status_summary	varchar2(255),
     --
-    -- The following three columns encapsulate the remaining attributes of an Event: 
+    -- The following four columns encapsulate the remaining attributes of an Event: 
     -- the activity that takes place during the event, its timespan (a collection of time 
     -- intervals during which the event occurs), and an optional recurrence specification 
-    -- that identifies how events repeat in time.
+    -- that identifies how events repeat in time, and the location
     --
     activity_id         integer
                         constraint acs_events_activity_id_fk
@@ -145,6 +153,7 @@ create table acs_events (
     recurrence_id       integer
                         constraint acs_events_recurrence_id_fk
                         references recurrences,
+    location	        varchar2(255),
     -- a link which points to a page related to the event
     -- this could be either additional detail or a substitution
     -- for the link in some application view, e.g. drill-down from
@@ -195,6 +204,10 @@ comment on column acs_events.status_summary is '
 
 comment on column acs_events.timespan_id is '
     The time span associated with this event.
+';
+
+comment on column acs_events.location is '
+    The location associated with this event.
 ';
 
 comment on column acs_events.activity_id is '
@@ -252,7 +265,8 @@ select event_id,
        nvl(e.status_summary, a.status_summary) as status_summary,
        e.activity_id,
        timespan_id,
-       recurrence_id
+       recurrence_id,
+       location
 from   acs_events e,
        acs_activities a
 where  e.activity_id = a.activity_id;
@@ -582,7 +596,8 @@ as
         creation_user   in acs_objects.creation_user%TYPE default null, 
         creation_ip     in acs_objects.creation_ip%TYPE default null, 
         context_id      in acs_objects.context_id%TYPE default null,
-        package_id      in acs_objects.package_id%TYPE default null 
+        package_id      in acs_objects.package_id%TYPE default null,
+	location        in acs_objects.location%TYPE default null
     ) return acs_events.event_id%TYPE
     is
         new_event_id acs_events.event_id%TYPE;
@@ -599,9 +614,9 @@ as
         );
 
         insert into acs_events
-            (event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id)
+            (event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id, location)
         values
-            (new_event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id);
+            (new_event_id, name, description, html_p, status_summary, activity_id, timespan_id, recurrence_id, location);
 
         return new_event_id;
     end new; 
@@ -866,7 +881,8 @@ as
             creation_user => object.creation_user,
             creation_ip   => object.creation_ip,
             context_id    => object.context_id,
-            package_id    => object.package_id
+            package_id    => object.package_id,
+	    location      => event.location
         );
 
         return new_event_id;
