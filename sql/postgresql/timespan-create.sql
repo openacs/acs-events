@@ -556,7 +556,7 @@ $$ LANGUAGE plpgsql;
 --
     --
     -- Creates a new copy of a time interval.
-    -- JS: Overloaded versaion of above, no offset
+    -- JS: Overloaded version of above, no offset
     --
     -- @param interval_id   Interval to copy
     --
