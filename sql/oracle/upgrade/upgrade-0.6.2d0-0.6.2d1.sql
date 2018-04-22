@@ -88,7 +88,7 @@ as
         creation_ip     in acs_objects.creation_ip%TYPE default null, 
         context_id      in acs_objects.context_id%TYPE default null,
         package_id      in acs_objects.package_id%TYPE default null,
-	location        in acs_objects.location%TYPE default null
+	location        in acs_events.location%TYPE default null
     ) return acs_events.event_id%TYPE
     is
         new_event_id acs_events.event_id%TYPE;
