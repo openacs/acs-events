@@ -71,6 +71,243 @@ where  e.activity_id = a.activity_id;
 -- .new_instance() functions
 --
 
+create or replace package acs_event
+as 
+    function new ( 
+        -- Creates a new event (20.10.10)
+        -- @author W. Scott Meeks
+        -- @param event_id          optional id to use for new event
+        -- @param name                  optional Name of the new event
+        -- @param description   optional Description of the new event
+        -- @param html_p        optional Description is html
+        -- @param status_summary    optional status information to add to name
+        -- @param timespan_id       optional initial time interval set
+        -- @param activity_id       optional initial activity
+        -- @param recurrence_id     optional id of recurrence information
+        -- @param object_type       'acs_event'
+        -- @param creation_date     default sysdate
+        -- @param creation_user     acs_object param
+        -- @param creation_ip       acs_object param
+        -- @param context_id        acs_object param
+	-- @param location          location
+     	--
+        -- @return The id of the new event.
+        --
+        event_id               in acs_events.event_id%TYPE default null, 
+        name                   in acs_events.name%TYPE default null,
+        description            in acs_events.description%TYPE default null,
+        html_p                 in acs_events.html_p%TYPE default null,
+        status_summary         in acs_events.status_summary%TYPE default null,
+        timespan_id            in acs_events.timespan_id%TYPE default null, 
+        activity_id            in acs_events.activity_id%TYPE default null, 
+        recurrence_id          in acs_events.recurrence_id%TYPE default null, 
+        object_type            in acs_object_types.object_type%TYPE default 'acs_event', 
+        creation_date          in acs_objects.creation_date%TYPE default sysdate, 
+        creation_user          in acs_objects.creation_user%TYPE default null, 
+        creation_ip            in acs_objects.creation_ip%TYPE default null, 
+        context_id             in acs_objects.context_id%TYPE default null,
+        package_id             in acs_objects.package_id%TYPE default null,
+	location               in acs_events.location%TYPE default null
+    ) return acs_events.event_id%TYPE; 
+
+    procedure del ( 
+        -- Deletes an event (20.10.40)
+        -- Also deletes party mappings (via on delete cascade).
+        -- If this is the last instance of a recurring event, the recurrence
+        -- info is deleted as well
+        -- @author W. Scott Meeks
+        -- @param event_id id of event to delete
+        --
+        event_id        in acs_events.event_id%TYPE 
+    ); 
+
+    procedure delete_all (
+        -- Deletes all instances of an event.  
+        -- @author W. Scott Meeks
+        -- @param event_id  All events with the same recurrence_id as this one will be deleted.
+        --
+        event_id in acs_events.event_id%TYPE
+    );
+
+    procedure delete_all_recurrences (
+        -- Deletes all instances of an event.  
+        -- @author W. Scott Meeks
+        -- @param recurrence_id All events with this recurrence_id will be deleted.
+        --
+        recurrence_id in recurrences.recurrence_id%TYPE default null
+    );
+
+    function get_name (
+        -- Returns the name or the name of the activity associated with the event if 
+        -- name is null.
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to get name for
+        --
+        event_id            in acs_events.event_id%TYPE 
+    ) return acs_events.name%TYPE; 
+
+    function get_description (
+        -- Returns the description or the description of the activity associated 
+        -- with the event if description is null.
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to get description for
+        --
+        event_id            in acs_events.event_id%TYPE 
+    ) return acs_events.description%TYPE; 
+
+    function get_html_p (
+        -- Returns html_p or html_p of the activity associated with the event if 
+        -- html_p is null.
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to get html_p for
+        --
+        event_id            in acs_events.event_id%TYPE 
+    ) return acs_events.html_p%TYPE; 
+
+    function get_status_summary (
+        -- Returns status_summary or status_summary of the activity associated with the event if 
+        -- status_summary is null.
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to get status_summary for
+        --
+        event_id            in acs_events.event_id%TYPE 
+    ) return acs_events.status_summary%TYPE; 
+
+    procedure timespan_set (
+        -- Sets the time span for an event (20.10.15)
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to update
+        -- @param timespan_id   new time interval set
+        --
+        event_id        in acs_events.event_id%TYPE,
+        timespan_id     in timespans.timespan_id%TYPE
+    );
+
+    procedure recurrence_timespan_edit (
+        event_id               in acs_events.event_id%TYPE,
+        start_date             in time_intervals.start_date%TYPE,
+        end_date               in time_intervals.end_date%TYPE,
+        edit_past_events       in char default 't'
+    );
+
+    procedure activity_set (
+        -- Sets the activity for an event (20.10.20)
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to update
+        -- @param activity_id           new activity
+        --
+        event_id        in acs_events.event_id%TYPE,
+        activity_id     in acs_activities.activity_id%TYPE
+    );
+
+    procedure party_map (
+        -- Adds a party mapping to an event (20.10.30)
+        -- @author W. Scott Meeks
+        -- @param event_id event to add mapping to
+        -- @param party_id party to add mapping for
+        --
+        event_id        in acs_events.event_id%TYPE,
+        party_id        in parties.party_id%TYPE
+    );
+
+    procedure party_unmap (
+        -- Deletes a party mapping from an event (20.10.30)
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to delete mapping from
+        -- @param party_id                      id of party to delete mapping for
+        --
+        event_id    in acs_events.event_id%TYPE,
+        party_id    in parties.party_id%TYPE
+    );
+
+    function recurs_p (
+        -- Returns 't' if event recurs, 'f' otherwise (20.50.40)
+        -- @author W. Scott Meeks
+        -- @param event_id                      id of event to check
+        -- @return 't' or 'f'
+        --
+        event_id    in acs_events.event_id%TYPE
+    ) return char;
+
+    function instances_exist_p (
+        -- Returns 't' if events with the given recurrence_id exist, 'f' otherwise
+        -- @author W. Scott Meeks
+        -- @param recurrence_id                 id of recurrence to check
+        -- @return 't' or 'f'
+        --
+        recurrence_id   in acs_events.recurrence_id%TYPE
+    ) return char;
+
+    procedure insert_instances (
+        -- This is the key procedure creating recurring events.  This procedure
+        -- uses the interval set and recurrence information referenced by the event
+        -- to insert additional information to represent the recurrences.   
+        -- Events will be added up until the earlier of recur_until and
+        -- cutoff_date.  The procedure enforces a hard internal 
+        -- limit of adding no more than 10,000 recurrences at once to reduce the 
+        -- risk of demolishing the DB because of application bugs.  The date of the
+        -- last recurrence added is marked as the db_populated_until date.
+        --
+        -- The application is responsible for calling this function again if 
+        -- necessary to populate to a later date.  
+        --
+        -- @author W. Scott Meeks
+        -- @param event_id              The id of the event to recur.  If the 
+        --                              event's recurrence_id is null, nothing happens.
+        -- @param cutoff_date           optional If provided, determines how far out to
+        --                              prepopulate the DB.  If not provided, then 
+        --                              defaults to sysdate plus the value of the
+        --                              EventFutureLimit site parameter.
+        event_id        in acs_events.event_id%TYPE, 
+        cutoff_date     in date default null
+  );
+
+  procedure shift (
+        -- Shifts the timespan of an event by the given offsets.
+        -- @author W. Scott Meeks
+        -- @param event_id              Event to shift.
+        -- @param start_offset  optional If provided, adds this number to the
+        --                                              start_dates of the timespan of the event.
+        --                                              No effect on any null start_date.
+        -- @param end_offset    optional If provided, adds this number to the
+        --                                              end_dates of the timespan of the event.
+        --                                              No effect on any null end_date.
+        --
+        event_id        in acs_events.event_id%TYPE default null,
+        start_offset    in number default 0,
+        end_offset      in number default 0
+  );
+
+  procedure shift_all (
+        -- Shifts the timespan of all instances of a recurring event
+        -- by the given offsets.
+        -- @author W. Scott Meeks
+        -- @param event_id      All events with the same
+        --                          recurrence_id as this one will be shifted.
+        -- @param start_offset  optional If provided, adds this number to the
+        --                          start_dates of the timespan of the event
+        --                          instances.  No effect on any null start_date.
+        -- @param end_offset    optional If provided, adds this number to the
+        --                          end_dates of the timespan of the event
+        --                          instances.  No effect on any null end_date.
+        --
+        event_id        in acs_events.event_id%TYPE default null,
+        start_offset    in number default 0,
+        end_offset      in number default 0
+  );
+
+  procedure shift_all (
+        -- Same as above but invoked using recurrence Id
+        recurrence_id   in recurrences.recurrence_id%TYPE default null,
+        start_offset    in number default 0,
+        end_offset      in number default 0
+  );
+
+end acs_event; 
+/ 
+show errors
+
+
 create or replace package body acs_event
 as 
     function new ( 
