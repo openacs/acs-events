@@ -70,7 +70,7 @@ BEGIN
     attr_id := acs_attribute__create_attribute (
        'acs_activity',     -- object_type
        'html_p',	   -- attribute_name
-       'string',	   -- data_type
+       'boolean',	   -- data_type
        'HTML?',	           -- pretty_name
        'HTML?',	           -- pretty_plural
        null,		   -- table_name (default)

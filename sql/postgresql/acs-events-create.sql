@@ -132,7 +132,7 @@ BEGIN
     attr_id := acs_attribute__create_attribute ( 
         'acs_event',	     -- object_type
         'html_p',	     -- attribute_name
-        'string',	     -- datatype
+        'boolean',	     -- datatype
         'HTML?',	     -- pretty_name
         null,		     -- pretty_plural
         null,		     -- table_name (default)
@@ -177,7 +177,7 @@ BEGIN
     attr_id := acs_attribute__create_attribute ( 
         'acs_event',		        -- object_type
         'redirect_to_rel_link_p',     -- attribute_name
-        'string',			-- datatype
+        'boolean',			-- datatype
         'Redirect to Related Link?',  -- pretty_name
         null,				-- pretty_plural
         null,				-- table_name (default)
