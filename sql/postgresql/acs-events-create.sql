@@ -26,12 +26,12 @@ BEGIN
 
     -- Event object     
     PERFORM acs_object_type__create_type ( 
-        'acs_event',	-- object_type
+        'acs_event',    -- object_type
         'ACS Event',	-- pretty_name
         'ACS Events',	-- pretty_plural
-        'acs_object', -- supertype
-        'ACS_EVENTS',	-- table_name
-        'EVENT_ID',	-- id_column
+        'acs_object',   -- supertype
+        'acs_events',	-- table_name
+        'event_id',	-- id_column
         null,		-- package_name (default)
         'f',		-- abstract_p (default)
         null,		-- type_extension_table (default)

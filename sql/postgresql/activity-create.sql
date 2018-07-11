@@ -25,8 +25,8 @@ BEGIN
        'Activity',       -- pretty_name
        'Activities',     -- pretty_plural
        'acs_object',     -- supertype 
-       'ACS_ACTIVITIES', -- table_name
-       'ACTIVITY_ID',    -- id_column
+       'acs_activities', -- table_name
+       'activity_id',    -- id_column
        'null',	         -- package_name (default)
        'f',		 -- abstract_p (default)
        null,		 -- type_extension_table (default)
