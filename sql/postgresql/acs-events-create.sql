@@ -217,8 +217,8 @@ drop function inline_0 ();
 -- Events table
 create table acs_events (
     event_id            integer
-                        constraint acs_events_fk references acs_objects(object_id) on delete cascade
-                        constraint acs_events_pk primary key,
+                        constraint acs_events_event_id_fk references acs_objects(object_id) on delete cascade
+                        constraint acs_events_event_id_pk primary key,
     --
     -- Need additional columns for attributes not inherited from activity, e.g.
     -- activity.name = "Bootcamp" and event.name = "December Bootcamp"

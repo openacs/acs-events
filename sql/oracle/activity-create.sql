@@ -61,10 +61,10 @@ show errors
 
 create table acs_activities (
     activity_id         integer
-                        constraint acs_activities_fk
+                        constraint acs_activities_activity_id_fk
                         references acs_objects(object_id)
                         on delete cascade
-                        constraint acs_activities_pk
+                        constraint acs_activities_activity_id_pk
                         primary key,
     name                varchar2(255) not null,
     description         varchar2(4000),
