@@ -7,52 +7,52 @@
 -- The activity object
 
 begin
-    acs_object_type.create_type ( 
-    supertype     => 'acs_object', 
-    object_type   => 'acs_activity', 
-    pretty_name   => 'Activity', 
-    pretty_plural => 'Activities', 
-    table_name    => 'ACS_ACTIVITIES', 
-    id_column     => 'ACTIVITY_ID' 
-  ); 
+    acs_object_type.create_type (
+    supertype     => 'acs_object',
+    object_type   => 'acs_activity',
+    pretty_name   => 'Activity',
+    pretty_plural => 'Activities',
+    table_name    => 'ACS_ACTIVITIES',
+    id_column     => 'ACTIVITY_ID'
+  );
 end;
 /
 show errors
 
-declare 
-    attr_id acs_attributes.attribute_id%TYPE; 
+declare
+    attr_id acs_attributes.attribute_id%TYPE;
 begin
-    attr_id := acs_attribute.create_attribute ( 
-         object_type    => 'acs_activity', 
-         attribute_name => 'name', 
-         pretty_name    => 'Name', 
-         pretty_plural  => 'Names', 
-         datatype       => 'string' 
-    ); 
+    attr_id := acs_attribute.create_attribute (
+         object_type    => 'acs_activity',
+         attribute_name => 'name',
+         pretty_name    => 'Name',
+         pretty_plural  => 'Names',
+         datatype       => 'string'
+    );
 
-    attr_id := acs_attribute.create_attribute ( 
-         object_type    => 'acs_activity', 
-         attribute_name => 'description', 
-         pretty_name    => 'Description', 
-         pretty_plural  => 'Descriptions', 
-         datatype       => 'string' 
-    ); 
+    attr_id := acs_attribute.create_attribute (
+         object_type    => 'acs_activity',
+         attribute_name => 'description',
+         pretty_name    => 'Description',
+         pretty_plural  => 'Descriptions',
+         datatype       => 'string'
+    );
 
-    attr_id := acs_attribute.create_attribute ( 
-         object_type    => 'acs_activity', 
-         attribute_name => 'html_p', 
-         pretty_name    => 'HTML?', 
-         pretty_plural  => 'HTML?', 
-         datatype       => 'string' 
-    ); 
+    attr_id := acs_attribute.create_attribute (
+         object_type    => 'acs_activity',
+         attribute_name => 'html_p',
+         pretty_name    => 'HTML?',
+         pretty_plural  => 'HTML?',
+         datatype       => 'string'
+    );
 
-    attr_id := acs_attribute.create_attribute ( 
-         object_type    => 'acs_activity', 
-         attribute_name => 'status_summary', 
-         pretty_name    => 'Status Summary', 
-         pretty_plural  => 'Status Summaries', 
-         datatype       => 'string' 
-    ); 
+    attr_id := acs_attribute.create_attribute (
+         object_type    => 'acs_activity',
+         attribute_name => 'status_summary',
+         pretty_name    => 'Status Summary',
+         pretty_plural  => 'Status Summaries',
+         datatype       => 'string'
+    );
 end;
 /
 show errors
@@ -69,7 +69,7 @@ create table acs_activities (
     name                varchar2(255) not null,
     description         varchar2(4000),
     -- is the activity description written in html?
-    html_p              char(1) 
+    html_p              char(1)
                         constraint acs_activities_html_p_ck
                         check(html_p in ('t','f')),
     status_summary      varchar2(255)
@@ -78,7 +78,7 @@ create table acs_activities (
 comment on table acs_activities is '
     Represents what happens during an event
 ';
-        
+
 create table acs_activity_object_map (
     activity_id         integer
                         constraint acs_act_obj_mp_activity_id_fk
@@ -96,11 +96,11 @@ comment on table acs_activity_object_map is '
 
 create or replace package acs_activity
 as
-    function new ( 
+    function new (
          -- Create a new activity
          -- @author W. Scott Meeks
          -- @param activity_id       optional id to use for new activity
-         -- @param name                         Name of the activity 
+         -- @param name                         Name of the activity
          -- @param description          optional description of the activity
          -- @param html_p               optional description is html
          -- @param status_summary       optional additional status to display
@@ -111,17 +111,17 @@ as
          -- @param context_id           acs_object param
          -- @return The id of the new activity.
          --
-         activity_id         in acs_activities.activity_id%TYPE   default null, 
+         activity_id         in acs_activities.activity_id%TYPE   default null,
          name                in acs_activities.name%TYPE,
          description         in acs_activities.description%TYPE   default null,
          html_p              in acs_activities.html_p%TYPE        default 'f',
          status_summary      in acs_activities.status_summary%TYPE        default null,
-         object_type         in acs_object_types.object_type%TYPE default 'acs_activity', 
-         creation_date       in acs_objects.creation_date%TYPE    default sysdate, 
-         creation_user       in acs_objects.creation_user%TYPE    default null, 
-         creation_ip         in acs_objects.creation_ip%TYPE      default null, 
-         context_id          in acs_objects.context_id%TYPE       default null 
-    ) return acs_activities.activity_id%TYPE; 
+         object_type         in acs_object_types.object_type%TYPE default 'acs_activity',
+         creation_date       in acs_objects.creation_date%TYPE    default sysdate,
+         creation_user       in acs_objects.creation_user%TYPE    default null,
+         creation_ip         in acs_objects.creation_ip%TYPE      default null,
+         context_id          in acs_objects.context_id%TYPE       default null
+    ) return acs_activities.activity_id%TYPE;
 
     function name (
         -- name method
@@ -129,15 +129,15 @@ as
         -- @param activity_id
         --
         activity_id          in acs_activities.activity_id%TYPE
-        
+
     ) return acs_activities.name%TYPE;
- 
-    procedure del ( 
+
+    procedure del (
          -- Deletes an activity
          -- @author W. Scott Meeks
          -- @param activity_id      id of activity to delete
-         activity_id      in acs_activities.activity_id%TYPE 
-    ); 
+         activity_id      in acs_activities.activity_id%TYPE
+    );
 
 
     -- NOTE: can't use update
@@ -149,7 +149,7 @@ as
          -- @param name        optional New name for this activity
          -- @param description optional New description for this activity
          -- @param html_p      optional New value of html_p for this activity
-         activity_id         in acs_activities.activity_id%TYPE, 
+         activity_id         in acs_activities.activity_id%TYPE,
          name                in acs_activities.name%TYPE default null,
          description         in acs_activities.description%TYPE default null,
          html_p              in acs_activities.html_p%TYPE default null,
@@ -162,7 +162,7 @@ as
          -- @param activity_id       id of activity to add mapping to
          -- @param object_id         id of object to add mapping for
          --
-         activity_id         in acs_activities.activity_id%TYPE, 
+         activity_id         in acs_activities.activity_id%TYPE,
          object_id           in acs_objects.object_id%TYPE
     );
 
@@ -172,7 +172,7 @@ as
          -- @param activity_id activity to delete mapping from
          -- @param object_id   object to delete mapping for
          --
-         activity_id         in acs_activities.activity_id%TYPE, 
+         activity_id         in acs_activities.activity_id%TYPE,
          object_id           in acs_objects.object_id%TYPE
     );
 
@@ -182,17 +182,17 @@ show errors
 
 create or replace package body acs_activity
 as
-    function new ( 
-         activity_id         in acs_activities.activity_id%TYPE   default null, 
+    function new (
+         activity_id         in acs_activities.activity_id%TYPE   default null,
          name                in acs_activities.name%TYPE,
          description         in acs_activities.description%TYPE   default null,
          html_p              in acs_activities.html_p%TYPE        default 'f',
          status_summary      in acs_activities.status_summary%TYPE  default null,
-         object_type         in acs_object_types.object_type%TYPE default 'acs_activity', 
-         creation_date       in acs_objects.creation_date%TYPE    default sysdate, 
-         creation_user       in acs_objects.creation_user%TYPE    default null, 
-         creation_ip         in acs_objects.creation_ip%TYPE      default null, 
-         context_id          in acs_objects.context_id%TYPE       default null 
+         object_type         in acs_object_types.object_type%TYPE default 'acs_activity',
+         creation_date       in acs_objects.creation_date%TYPE    default sysdate,
+         creation_user       in acs_objects.creation_user%TYPE    default null,
+         creation_ip         in acs_objects.creation_ip%TYPE      default null,
+         context_id          in acs_objects.context_id%TYPE       default null
     ) return acs_activities.activity_id%TYPE
     is
         new_activity_id acs_activities.activity_id%TYPE;
@@ -222,9 +222,9 @@ as
         -- @param activity_id
         --
         activity_id          in acs_activities.activity_id%TYPE
-        
+
     ) return acs_activities.name%TYPE
-        
+
     is
         new_activity_name    acs_activities.name%TYPE;
 
@@ -237,22 +237,22 @@ as
         return  new_activity_name;
     end;
 
-         
-    procedure del ( 
-         activity_id in acs_activities.activity_id%TYPE 
+
+    procedure del (
+         activity_id in acs_activities.activity_id%TYPE
     )
     is
     begin
-         -- Cascade will cause delete from acs_activities 
+         -- Cascade will cause delete from acs_activities
          -- and acs_activity_object_map
 
-         acs_object.del(activity_id); 
+         acs_object.del(activity_id);
     end del;
 
     -- NOTE: can't use update
 
     procedure edit (
-         activity_id     in acs_activities.activity_id%TYPE, 
+         activity_id     in acs_activities.activity_id%TYPE,
          name            in acs_activities.name%TYPE default null,
          description     in acs_activities.description%TYPE default null,
          html_p          in acs_activities.html_p%TYPE default null,
@@ -273,7 +273,7 @@ as
     end edit;
 
     procedure object_map (
-        activity_id in acs_activities.activity_id%TYPE, 
+        activity_id in acs_activities.activity_id%TYPE,
         object_id   in acs_objects.object_id%TYPE
     )
     is
@@ -285,7 +285,7 @@ as
     end object_map;
 
     procedure object_unmap (
-        activity_id in acs_activities.activity_id%TYPE, 
+        activity_id in acs_activities.activity_id%TYPE,
          object_id  in acs_objects.object_id%TYPE
     )
     is
@@ -298,8 +298,3 @@ as
 end acs_activity;
 /
 show errors
-
-
-
-
-

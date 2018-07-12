@@ -15,98 +15,98 @@ create sequence acs_events_seq start with 1;
 
 -- The event object
 begin
-    acs_object_type.create_type ( 
-        supertype     => 'acs_object', 
-        object_type   => 'acs_event', 
-        pretty_name   => 'ACS Event', 
-        pretty_plural => 'ACS Events', 
-        table_name    => 'ACS_EVENTS', 
-        id_column     => 'EVENT_ID' 
-    ); 
+    acs_object_type.create_type (
+        supertype     => 'acs_object',
+        object_type   => 'acs_event',
+        pretty_name   => 'ACS Event',
+        pretty_plural => 'ACS Events',
+        table_name    => 'ACS_EVENTS',
+        id_column     => 'EVENT_ID'
+    );
 end;
 /
 show errors
 
 -- Event attributes
-declare 
-    attr_id acs_attributes.attribute_id%TYPE; 
+declare
+    attr_id acs_attributes.attribute_id%TYPE;
 begin
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'timespan_id', 
-        pretty_name    => 'Timespan', 
-        pretty_plural  => 'Timespans', 
-        datatype       => 'integer' 
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'timespan_id',
+        pretty_name    => 'Timespan',
+        pretty_plural  => 'Timespans',
+        datatype       => 'integer'
     );
-     attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'activity_id', 
-        pretty_name    => 'Activity', 
-        pretty_plural  => 'Activities', 
-        datatype       => 'integer' 
+     attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'activity_id',
+        pretty_name    => 'Activity',
+        pretty_plural  => 'Activities',
+        datatype       => 'integer'
     );
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'recurrence_id', 
-        pretty_name    => 'Recurrence', 
-        pretty_plural  => 'Recurrences', 
-        datatype       => 'integer' 
-    ); 
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'name', 
-        pretty_name    => 'Name', 
-        pretty_plural  => 'Names', 
-        datatype       => 'string' 
-    ); 
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'description', 
-        pretty_name    => 'Description', 
-        pretty_plural  => 'Descriptions', 
-        datatype       => 'string' 
-    ); 
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'status_summary', 
-        pretty_name    => 'Status Summary', 
-        pretty_plural  => 'Status Summaries', 
-        datatype       => 'string' 
-    ); 
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'html_p', 
-        pretty_name    => 'HTML?', 
-        pretty_plural  => '', 
-        datatype       => 'string' 
-    ); 
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'related_link_url', 
-        pretty_name    => 'Related Link URL', 
-        pretty_plural  => 'Related Link URLs ', 
-        datatype       => 'string' 
-    ); 
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'related_link_text', 
-        pretty_name    => 'Related Link Text', 
-        pretty_plural  => 'Related Link Texts', 
-        datatype       => 'string' 
-    ); 
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'redirect_to_rel_link_p', 
-        pretty_name    => 'Redirect to Related Link?', 
-        pretty_plural  => '', 
-        datatype       => 'string' 
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'recurrence_id',
+        pretty_name    => 'Recurrence',
+        pretty_plural  => 'Recurrences',
+        datatype       => 'integer'
     );
-    attr_id := acs_attribute.create_attribute ( 
-        object_type    => 'acs_event', 
-        attribute_name => 'location', 
-        pretty_name    => 'Location', 
-        pretty_plural  => 'Locations', 
-        datatype       => 'string' 
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'name',
+        pretty_name    => 'Name',
+        pretty_plural  => 'Names',
+        datatype       => 'string'
+    );
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'description',
+        pretty_name    => 'Description',
+        pretty_plural  => 'Descriptions',
+        datatype       => 'string'
+    );
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'status_summary',
+        pretty_name    => 'Status Summary',
+        pretty_plural  => 'Status Summaries',
+        datatype       => 'string'
+    );
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'html_p',
+        pretty_name    => 'HTML?',
+        pretty_plural  => '',
+        datatype       => 'string'
+    );
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'related_link_url',
+        pretty_name    => 'Related Link URL',
+        pretty_plural  => 'Related Link URLs ',
+        datatype       => 'string'
+    );
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'related_link_text',
+        pretty_name    => 'Related Link Text',
+        pretty_plural  => 'Related Link Texts',
+        datatype       => 'string'
+    );
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'redirect_to_rel_link_p',
+        pretty_name    => 'Redirect to Related Link?',
+        pretty_plural  => '',
+        datatype       => 'string'
+    );
+    attr_id := acs_attribute.create_attribute (
+        object_type    => 'acs_event',
+        attribute_name => 'location',
+        pretty_name    => 'Location',
+        pretty_plural  => 'Locations',
+        datatype       => 'string'
     );
 
 end;
@@ -123,10 +123,10 @@ create table acs_events (
     -- Need additional columns for attributes not inherited from activity, e.g.
     -- activity.name = "Bootcamp" and event.name = "December Bootcamp"
     --
-    -- The Event API supports methods to retrieve name/description from 
+    -- The Event API supports methods to retrieve name/description from
     -- either the event (if defined) or the underlying activity (if not defined)
     --
-    -- acs_event.get_name() 
+    -- acs_event.get_name()
     -- acs_event.get_description()
     -- acs_event.get_html_p()
     -- acs_event.get_status_summary()
@@ -134,13 +134,13 @@ create table acs_events (
     name                varchar2(255),
     description         varchar2(4000),
     -- is the event description written in html
-    html_p              char(1) 
+    html_p              char(1)
                         constraint acs_events_html_p_ck check(html_p in ('t','f')),
     status_summary	varchar2(255),
     --
-    -- The following four columns encapsulate the remaining attributes of an Event: 
-    -- the activity that takes place during the event, its timespan (a collection of time 
-    -- intervals during which the event occurs), and an optional recurrence specification 
+    -- The following four columns encapsulate the remaining attributes of an Event:
+    -- the activity that takes place during the event, its timespan (a collection of time
+    -- intervals during which the event occurs), and an optional recurrence specification
     -- that identifies how events repeat in time, and the location
     --
     activity_id         integer
@@ -159,16 +159,16 @@ create table acs_events (
     -- for the link in some application view, e.g. drill-down from
     -- calendar.
     --
-    related_link_url    varchar(4000),  
+    related_link_url    varchar(4000),
     related_link_text   varchar(4000),
     --
     -- Interpretation of this column is application dependent, but it is
     -- suggested that if this is 't', then related_link_{url|text} should be
-    -- used as the link in summary views in an application.  Otherwise, 
+    -- used as the link in summary views in an application.  Otherwise,
     -- related_link_{url|text} should be available in a detail view
     -- of the event.
     --
-    redirect_to_rel_link_p  char(1) 
+    redirect_to_rel_link_p  char(1)
                             constraint acs_events_rdrct2rel_lnk_p_ck
                             check(redirect_to_rel_link_p in ('t','f'))
 );
@@ -240,8 +240,8 @@ comment on table acs_event_party_map is '
 -- This view makes the temporal information easier to access
 
 create or replace view acs_events_dates as
-select e.*, 
-       start_date, 
+select e.*,
+       start_date,
        end_date
 from   acs_events e,
        timespans s,
@@ -258,7 +258,7 @@ comment on table acs_events_dates is '
 -- functions
 
 create or replace view acs_events_activities as
-select event_id, 
+select event_id,
        nvl(e.name, a.name) as name,
        nvl(e.description, a.description) as description,
        nvl(e.html_p, a.html_p) as html_p,
@@ -277,7 +277,7 @@ comment on table acs_events_activities is '
 ';
 
 -- These views should make it easier to find recurrences that
--- need to be populated further, e.g. 
+-- need to be populated further, e.g.
 --
 --     select   recurrence_id
 --     from     partially_populated_events p, acs_event_party_map m
@@ -287,9 +287,9 @@ comment on table acs_events_activities is '
 --     group by recurrence_id
 --
 create or replace view partially_populated_event_ids as
-select   min(event_id) as event_id, 
+select   min(event_id) as event_id,
          db_populated_until
-from     acs_events e, 
+from     acs_events e,
          recurrences r
 where    e.recurrence_id = r.recurrence_id
 and      (recur_until > db_populated_until or recur_until is null)
@@ -301,9 +301,9 @@ comment on table partially_populated_event_ids is '
 ';
 
 create or replace view partially_populated_events as
-select  e.event_id, 
-        timespan_id, 
-        activity_id, 
+select  e.event_id,
+        timespan_id,
+        activity_id,
         recurrence_id,
         db_populated_until
 from    acs_events e,
@@ -320,7 +320,7 @@ comment on table partially_populated_events is '
 --
 -- Quick reference for the API supported for the Event object.  Note that every procedure
 -- takes event_id as the first argument, we're just leave it out for compactness.
--- 
+--
 --     new          (...)
 --     delete       ()
 --
@@ -348,8 +348,8 @@ comment on table partially_populated_events is '
 
 
 create or replace package acs_event
-as 
-    function new ( 
+as
+    function new (
         -- Creates a new event (20.10.10)
         -- @author W. Scott Meeks
         -- @param event_id          optional id to use for new event
@@ -372,27 +372,27 @@ as
      	--
         -- @return The id of the new event.
         --
-        event_id               in acs_events.event_id%TYPE default null, 
+        event_id               in acs_events.event_id%TYPE default null,
         name                   in acs_events.name%TYPE default null,
         description            in acs_events.description%TYPE default null,
         html_p                 in acs_events.html_p%TYPE default null,
         status_summary         in acs_events.status_summary%TYPE default null,
-        timespan_id            in acs_events.timespan_id%TYPE default null, 
-        activity_id            in acs_events.activity_id%TYPE default null, 
-        recurrence_id          in acs_events.recurrence_id%TYPE default null, 
-        object_type            in acs_object_types.object_type%TYPE default 'acs_event', 
-        creation_date          in acs_objects.creation_date%TYPE default sysdate, 
-        creation_user          in acs_objects.creation_user%TYPE default null, 
-        creation_ip            in acs_objects.creation_ip%TYPE default null, 
+        timespan_id            in acs_events.timespan_id%TYPE default null,
+        activity_id            in acs_events.activity_id%TYPE default null,
+        recurrence_id          in acs_events.recurrence_id%TYPE default null,
+        object_type            in acs_object_types.object_type%TYPE default 'acs_event',
+        creation_date          in acs_objects.creation_date%TYPE default sysdate,
+        creation_user          in acs_objects.creation_user%TYPE default null,
+        creation_ip            in acs_objects.creation_ip%TYPE default null,
         context_id             in acs_objects.context_id%TYPE default null,
         package_id             in acs_objects.package_id%TYPE default null,
 	location               in acs_events.location%TYPE default null,
 	related_link_url       in acs_events.related_link_url%TYPE default null,
 	related_link_text      in acs_events.related_link_text%TYPE default null,
 	redirect_to_rel_link_p in acs_events.locationredirect_to_rel_link_p%TYPE default null
-    ) return acs_events.event_id%TYPE; 
+    ) return acs_events.event_id%TYPE;
 
-    procedure del ( 
+    procedure del (
         -- Deletes an event (20.10.40)
         -- Also deletes party mappings (via on delete cascade).
         -- If this is the last instance of a recurring event, the recurrence
@@ -400,11 +400,11 @@ as
         -- @author W. Scott Meeks
         -- @param event_id id of event to delete
         --
-        event_id        in acs_events.event_id%TYPE 
-    ); 
+        event_id        in acs_events.event_id%TYPE
+    );
 
     procedure delete_all (
-        -- Deletes all instances of an event.  
+        -- Deletes all instances of an event.
         -- @author W. Scott Meeks
         -- @param event_id  All events with the same recurrence_id as this one will be deleted.
         --
@@ -412,7 +412,7 @@ as
     );
 
     procedure delete_all_recurrences (
-        -- Deletes all instances of an event.  
+        -- Deletes all instances of an event.
         -- @author W. Scott Meeks
         -- @param recurrence_id All events with this recurrence_id will be deleted.
         --
@@ -420,40 +420,40 @@ as
     );
 
     function get_name (
-        -- Returns the name or the name of the activity associated with the event if 
+        -- Returns the name or the name of the activity associated with the event if
         -- name is null.
         -- @author W. Scott Meeks
         -- @param event_id                      id of event to get name for
         --
-        event_id            in acs_events.event_id%TYPE 
-    ) return acs_events.name%TYPE; 
+        event_id            in acs_events.event_id%TYPE
+    ) return acs_events.name%TYPE;
 
     function get_description (
-        -- Returns the description or the description of the activity associated 
+        -- Returns the description or the description of the activity associated
         -- with the event if description is null.
         -- @author W. Scott Meeks
         -- @param event_id                      id of event to get description for
         --
-        event_id            in acs_events.event_id%TYPE 
-    ) return acs_events.description%TYPE; 
+        event_id            in acs_events.event_id%TYPE
+    ) return acs_events.description%TYPE;
 
     function get_html_p (
-        -- Returns html_p or html_p of the activity associated with the event if 
+        -- Returns html_p or html_p of the activity associated with the event if
         -- html_p is null.
         -- @author W. Scott Meeks
         -- @param event_id                      id of event to get html_p for
         --
-        event_id            in acs_events.event_id%TYPE 
-    ) return acs_events.html_p%TYPE; 
+        event_id            in acs_events.event_id%TYPE
+    ) return acs_events.html_p%TYPE;
 
     function get_status_summary (
-        -- Returns status_summary or status_summary of the activity associated with the event if 
+        -- Returns status_summary or status_summary of the activity associated with the event if
         -- status_summary is null.
         -- @author W. Scott Meeks
         -- @param event_id                      id of event to get status_summary for
         --
-        event_id            in acs_events.event_id%TYPE 
-    ) return acs_events.status_summary%TYPE; 
+        event_id            in acs_events.event_id%TYPE
+    ) return acs_events.status_summary%TYPE;
 
     procedure timespan_set (
         -- Sets the time span for an event (20.10.15)
@@ -523,24 +523,24 @@ as
     procedure insert_instances (
         -- This is the key procedure creating recurring events.  This procedure
         -- uses the interval set and recurrence information referenced by the event
-        -- to insert additional information to represent the recurrences.   
+        -- to insert additional information to represent the recurrences.
         -- Events will be added up until the earlier of recur_until and
-        -- cutoff_date.  The procedure enforces a hard internal 
-        -- limit of adding no more than 10,000 recurrences at once to reduce the 
+        -- cutoff_date.  The procedure enforces a hard internal
+        -- limit of adding no more than 10,000 recurrences at once to reduce the
         -- risk of demolishing the DB because of application bugs.  The date of the
         -- last recurrence added is marked as the db_populated_until date.
         --
-        -- The application is responsible for calling this function again if 
-        -- necessary to populate to a later date.  
+        -- The application is responsible for calling this function again if
+        -- necessary to populate to a later date.
         --
         -- @author W. Scott Meeks
-        -- @param event_id              The id of the event to recur.  If the 
+        -- @param event_id              The id of the event to recur.  If the
         --                              event's recurrence_id is null, nothing happens.
         -- @param cutoff_date           optional If provided, determines how far out to
-        --                              prepopulate the DB.  If not provided, then 
+        --                              prepopulate the DB.  If not provided, then
         --                              defaults to sysdate plus the value of the
         --                              EventFutureLimit site parameter.
-        event_id        in acs_events.event_id%TYPE, 
+        event_id        in acs_events.event_id%TYPE,
         cutoff_date     in date default null
   );
 
@@ -585,31 +585,31 @@ as
         end_offset      in number default 0
   );
 
-end acs_event; 
-/ 
+end acs_event;
+/
 show errors
 
 create or replace package body acs_event
-as 
-    function new ( 
-        event_id               in acs_events.event_id%TYPE default null, 
+as
+    function new (
+        event_id               in acs_events.event_id%TYPE default null,
         name                   in acs_events.name%TYPE default null,
         description            in acs_events.description%TYPE default null,
         html_p                 in acs_events.html_p%TYPE default null,
         status_summary         in acs_events.status_summary%TYPE default null,
-        timespan_id            in acs_events.timespan_id%TYPE default null, 
-        activity_id            in acs_events.activity_id%TYPE default null, 
-        recurrence_id          in acs_events.recurrence_id%TYPE default null, 
-        object_type            in acs_object_types.object_type%TYPE default 'acs_event', 
-        creation_date          in acs_objects.creation_date%TYPE default sysdate, 
-        creation_user          in acs_objects.creation_user%TYPE default null, 
-        creation_ip            in acs_objects.creation_ip%TYPE default null, 
+        timespan_id            in acs_events.timespan_id%TYPE default null,
+        activity_id            in acs_events.activity_id%TYPE default null,
+        recurrence_id          in acs_events.recurrence_id%TYPE default null,
+        object_type            in acs_object_types.object_type%TYPE default 'acs_event',
+        creation_date          in acs_objects.creation_date%TYPE default sysdate,
+        creation_user          in acs_objects.creation_user%TYPE default null,
+        creation_ip            in acs_objects.creation_ip%TYPE default null,
         context_id             in acs_objects.context_id%TYPE default null,
         package_id             in acs_objects.package_id%TYPE default null,
 	location               in acs_events.location%TYPE default null
 	related_link_url       in acs_events.related_link_url%TYPE default null,
 	related_link_text      in acs_events.related_link_text%TYPE default null,
-	redirect_to_rel_link_p in acs_events.redirect_to_rel_link_p%TYPE default NULL	
+	redirect_to_rel_link_p in acs_events.redirect_to_rel_link_p%TYPE default NULL
     ) return acs_events.event_id%TYPE
     is
         new_event_id acs_events.event_id%TYPE;
@@ -633,10 +633,10 @@ as
 	    related_link_url, related_link_text, redirect_to_rel_link_p);
 
         return new_event_id;
-    end new; 
+    end new;
 
-    procedure del ( 
-        event_id in acs_events.event_id%TYPE 
+    procedure del (
+        event_id in acs_events.event_id%TYPE
     )
     is
         recurrence_id acs_events.recurrence_id%TYPE;
@@ -646,7 +646,7 @@ as
         where  event_id = acs_event.del.event_id;
 
         -- acs_events and acs_event_party_map deleted via on delete cascade
-        acs_object.del(event_id); 
+        acs_object.del(event_id);
 
         -- Check for no more instances and delete recurrence if exists
         if instances_exist_p(recurrence_id) = 'f' then
@@ -689,13 +689,13 @@ as
     -- acs_event_activity view
 
     function get_name (
-        event_id in acs_events.event_id%TYPE 
+        event_id in acs_events.event_id%TYPE
     ) return acs_events.name%TYPE
     is
-        name acs_events.name%TYPE; 
+        name acs_events.name%TYPE;
     begin
         select nvl(e.name, a.name) into name
-        from   acs_events e, 
+        from   acs_events e,
                acs_activities a
         where  event_id = get_name.event_id
         and    e.activity_id = a.activity_id(+);
@@ -704,10 +704,10 @@ as
     end get_name;
 
     function get_description (
-        event_id    in acs_events.event_id%TYPE 
+        event_id    in acs_events.event_id%TYPE
     ) return acs_events.description%TYPE
     is
-        description acs_events.description%TYPE; 
+        description acs_events.description%TYPE;
     begin
         select nvl(e.description, a.description) into description
         from   acs_events e, acs_activities a
@@ -718,10 +718,10 @@ as
     end get_description;
 
     function get_html_p (
-        event_id    in acs_events.event_id%TYPE 
+        event_id    in acs_events.event_id%TYPE
     ) return acs_events.html_p%TYPE
     is
-        html_p acs_events.html_p%TYPE; 
+        html_p acs_events.html_p%TYPE;
     begin
         select nvl(e.html_p, a.html_p) into html_p
         from  acs_events e, acs_activities a
@@ -732,10 +732,10 @@ as
     end get_html_p;
 
     function get_status_summary (
-        event_id    in acs_events.event_id%TYPE 
+        event_id    in acs_events.event_id%TYPE
     ) return acs_events.status_summary%TYPE
     is
-        status_summary acs_events.status_summary%TYPE; 
+        status_summary acs_events.status_summary%TYPE;
     begin
         select nvl(e.status_summary, a.status_summary) into status_summary
         from  acs_events e, acs_activities a
@@ -774,7 +774,7 @@ as
         timespans.timespan_id = acs_events.timespan_id and
         event_id= recurrence_timespan_edit.event_id;
 
-        for v_timespan in 
+        for v_timespan in
         (select * from time_intervals where interval_id in (select interval_id from timespans where timespan_id in (select timespan_id from acs_events where recurrence_id = (select recurrence_id from acs_events where event_id = recurrence_timespan_edit.event_id)))
         and (edit_past_events = 't' or start_date >= to_date(v_one_start_date,'YYYY-MM-DD HH24:MI:SS') ))
         LOOP
@@ -837,7 +837,7 @@ as
     begin
         -- Only need to check if any rows exist.
         select count(*) into result
-        from   dual 
+        from   dual
         where exists (select recurrence_id
                       from   acs_events
                       where  recurrence_id = instances_exist_p.recurrence_id);
@@ -877,7 +877,7 @@ as
          select * into event
          from   acs_events
          where  event_id = new_instance.event_id;
-                
+
          select * into object
          from   acs_objects
          where  object_id = event_id;
@@ -906,7 +906,7 @@ as
     end new_instance;
 
     procedure insert_instances (
-        event_id        in acs_events.event_id%TYPE, 
+        event_id        in acs_events.event_id%TYPE,
         cutoff_date             in date default null
     )
     is
@@ -932,11 +932,11 @@ as
         select * into event
         from   acs_events
         where  event_id = insert_instances.event_id;
-        
+
         select * into recurrence
         from   recurrences
         where  recurrence_id = event.recurrence_id;
-        
+
         -- Set cutoff date
         -- EventFutureLimit is in years.
         if cutoff_date is null then
@@ -944,36 +944,36 @@ as
         else
            stop_date := cutoff_date;
         end if;
-        
+
         -- Events only populated until max(cutoff_date, recur_until)
         -- If recur_until null, then defaults to cutoff_date
         if recurrence.recur_until < stop_date then
            stop_date := recurrence.recur_until;
         end if;
-        
+
         -- Figure out the date to start from
         select trunc(min(start_date))
         into   event_date
         from   acs_events_dates
         where  event_id = insert_instances.event_id;
-        
+
         if recurrence.db_populated_until is null then
            start_date := event_date;
         else
            start_date := recurrence.db_populated_until;
         end if;
-        
+
         current_date   := start_date;
         last_date_done := start_date;
         n_intervals    := recurrence.every_nth_interval;
-        
+
         -- Case off of the interval_name to make code easier to read
         select interval_name into interval_name
-        from   recurrences r, 
+        from   recurrences r,
                recurrence_interval_types t
         where  recurrence_id   = recurrence.recurrence_id
         and    r.interval_type = t.interval_type;
-        
+
         -- Week has to be handled specially.
         -- Start with the beginning of the week containing the start date.
 
@@ -982,13 +982,13 @@ as
             days_of_week := recurrence.days_of_week;
             days_length  := LENGTH(days_of_week);
         end if;
-        
+
         -- Check count to prevent runaway in case of error
         instance_count := 0;
         while instance_count < 10000 and (trunc(last_date_done) <= trunc(stop_date))
         loop
             instance_count := instance_count + 1;
-        
+
             -- Calculate next date based on interval type
             if interval_name = 'day' then
                 current_date := current_date + n_intervals;
@@ -998,7 +998,7 @@ as
              -- Find last day of month before correct month
                 v_last_day := ADD_MONTHS(LAST_DAY(current_date), n_intervals - 1);
                 -- Find correct week and go to correct day of week
-                current_date := NEXT_DAY(v_last_day + (7 * (to_char(current_date, 'W') - 1)), 
+                current_date := NEXT_DAY(v_last_day + (7 * (to_char(current_date, 'W') - 1)),
                                          to_char(current_date, 'DAY'));
             elsif interval_name = 'last_of_month' then
                 -- Find last day of correct month
@@ -1009,13 +1009,13 @@ as
                 current_date := ADD_MONTHS(current_date, 12 * n_intervals);
                 -- Deal with custom function
             elsif interval_name = 'custom' then
-                execute immediate 'current_date := ' || 
+                execute immediate 'current_date := ' ||
                               recurrence.custom_func || '(' || current_date || ', ' || n_intervals || ');';
             end if;
-        
+
             -- Check to make sure we're not going past Trunc because dates aren't integral
             exit when trunc(current_date) > trunc(stop_date);
-        
+
             -- Have to handle week specially
             if interval_name = 'week' then
                 -- loop over days_of_week extracting each day number
@@ -1028,7 +1028,7 @@ as
                     if trunc(week_date) > trunc(start_date) and trunc(week_date) <= trunc(stop_date) then
                          -- This is where we add the event
                          new_event_id := new_instance(
-                              event_id, 
+                              event_id,
                               trunc(week_date) - trunc(event_date)
                          );
                          last_date_done := week_date;
@@ -1045,13 +1045,13 @@ as
                 -- All other interval types
                 -- This is where we add the event
                 new_event_id := new_instance(
-                    event_id, 
+                    event_id,
                     trunc(current_date) - trunc(event_date)
                 );
                 last_date_done := current_date;
             end if;
         end loop;
-        
+
         update recurrences
         set    db_populated_until = last_date_done
         where  recurrence_id      = recurrence.recurrence_id;
@@ -1100,7 +1100,6 @@ as
         where recurrence_id = shift_all.recurrence_id;
     end shift_all;
 
-end acs_event; 
-/ 
+end acs_event;
+/
 show errors
-
