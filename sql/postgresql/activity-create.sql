@@ -15,16 +15,16 @@
 CREATE OR REPLACE FUNCTION inline_0(
 
 ) RETURNS integer AS $$
-DECLARE 
-    attr_id acs_attributes.attribute_id%TYPE; 
+DECLARE
+    attr_id acs_attributes.attribute_id%TYPE;
 BEGIN
 
-    -- Event object     
-    PERFORM acs_object_type__create_type ( 
+    -- Event object
+    PERFORM acs_object_type__create_type (
        'acs_activity',   -- object_type
        'Activity',       -- pretty_name
        'Activities',     -- pretty_plural
-       'acs_object',     -- supertype 
+       'acs_object',     -- supertype
        'acs_activities', -- table_name
        'activity_id',    -- id_column
        'null',	         -- package_name (default)
@@ -126,7 +126,7 @@ create table acs_activities (
 comment on table acs_activities is '
     Represents what happens during an event
 ';
-        
+
 
 create table acs_activity_object_map (
     activity_id         integer
@@ -150,7 +150,7 @@ comment on table acs_activity_object_map is '
 --
 --	name()
 --      edit (name,description,html_p,status_summary)
--- 
+--
 --      object_map (object_id)
 --      object_unmap (object_id)
 
@@ -169,7 +169,7 @@ select define_function_args('acs_activity__new','activity_id;null,name,descripti
      -- @author W. Scott Meeks
      --
      -- @param activity_id       Id to use for new activity
-     -- @param name              Name of the activity 
+     -- @param name              Name of the activity
      -- @param description       Description of the activity
      -- @param html_p            Is the description HTML?
      -- @param status_summary    Additional status note (optional)
@@ -194,13 +194,13 @@ CREATE OR REPLACE FUNCTION acs_activity__new(
    new__context_id integer         -- default null
 
 ) RETURNS integer AS $$
-DECLARE       
+DECLARE
        v_activity_id		  acs_activities.activity_id%TYPE;
 BEGIN
        v_activity_id := acs_object__new(
             new__activity_id,	   -- object_id
             new__object_type,	   -- object_type
-            new__creation_date,    -- creation_date  
+            new__creation_date,    -- creation_date
             new__creation_user,    -- creation_user
             new__creation_ip,	   -- creation_ip
             new__context_id,	   -- context_id
@@ -217,7 +217,7 @@ BEGIN
        return v_activity_id;
 
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
 
 
 
@@ -243,10 +243,10 @@ CREATE OR REPLACE FUNCTION acs_activity__delete(
 ) RETURNS integer AS $$
 DECLARE
 BEGIN
-       -- Cascade will cause delete from acs_activities 
+       -- Cascade will cause delete from acs_activities
        -- and acs_activity_object_map
 
-       PERFORM acs_object__delete(delete__activity_id); 
+       PERFORM acs_object__delete(delete__activity_id);
 
        return 0;
 
@@ -263,7 +263,7 @@ select define_function_args('acs_activity__name','activity_id');
 -- procedure acs_activity__name/1
 --
      --
-     -- Get name of this activity 
+     -- Get name of this activity
      --
      -- @author gjin@arsdigita.com
      --
@@ -276,7 +276,7 @@ CREATE OR REPLACE FUNCTION acs_activity__name(
    name__activity_id integer
 
 ) RETURNS varchar AS $$
-DECLARE 
+DECLARE
        v_activity_name		acs_activities.name%TYPE;
 BEGIN
        select  name
@@ -287,9 +287,9 @@ BEGIN
        return  v_activity_name;
 
 END;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;
 
-         
+
 
 
 -- added
@@ -406,8 +406,3 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
-
-
-
-
-
