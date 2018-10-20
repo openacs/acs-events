@@ -221,7 +221,7 @@ BEGIN
 					 join_interval__interval_id,
 					 join_interval__copy_p);
 
-	-- Dont forget to put the newly created timepsan into the shadow table
+	-- Don't forget to put the newly created timepsan into the shadow table
 	insert into ut_timespans (timespan_id,interval_id)
 	values (join_interval__timespan_id,v_interval_id_cp);
 
