@@ -1,5 +1,5 @@
 
-<property name="context">{/doc/acs-events {ACS Events}} {ACS Events Service Requirements}</property>
+<property name="context">{/doc/acs-events/ {ACS Events}} {ACS Events Service Requirements}</property>
 <property name="doc(title)">ACS Events Service Requirements</property>
 <master>
 <h2>ACS Events Service Requirements</h2>
