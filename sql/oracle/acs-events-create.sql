@@ -389,7 +389,7 @@ as
 	location               in acs_events.location%TYPE default null,
 	related_link_url       in acs_events.related_link_url%TYPE default null,
 	related_link_text      in acs_events.related_link_text%TYPE default null,
-	redirect_to_rel_link_p in acs_events.locationredirect_to_rel_link_p%TYPE default null
+	redirect_to_rel_link_p in char default null
     ) return acs_events.event_id%TYPE;
 
     procedure del (
@@ -606,10 +606,10 @@ as
         creation_ip            in acs_objects.creation_ip%TYPE default null,
         context_id             in acs_objects.context_id%TYPE default null,
         package_id             in acs_objects.package_id%TYPE default null,
-	location               in acs_events.location%TYPE default null
+	location               in acs_events.location%TYPE default null,
 	related_link_url       in acs_events.related_link_url%TYPE default null,
 	related_link_text      in acs_events.related_link_text%TYPE default null,
-	redirect_to_rel_link_p in acs_events.redirect_to_rel_link_p%TYPE default NULL
+	redirect_to_rel_link_p in char default NULL
     ) return acs_events.event_id%TYPE
     is
         new_event_id acs_events.event_id%TYPE;
