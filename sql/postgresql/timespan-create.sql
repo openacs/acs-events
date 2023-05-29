@@ -316,8 +316,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('time_interval__overlaps_p','interval_id,start_date;null,end_date;null');
 
 --
 -- procedure time_interval__overlaps_p/3
@@ -333,6 +331,7 @@ select define_function_args('time_interval__overlaps_p','interval_id,start_date;
     --
     -- @return true if the interval bounded by start_date through end_date, false otherwise.
     --
+
 CREATE OR REPLACE FUNCTION time_interval__overlaps_p(
    overlaps_p__interval_id integer,
    overlaps_p__start_date timestamptz, -- default null,
@@ -360,8 +359,6 @@ END;
 $$ LANGUAGE plpgsql; 
 
 
-
-
 --
 -- procedure time_interval__overlaps_p/4
 --
@@ -377,6 +374,9 @@ $$ LANGUAGE plpgsql;
     -- 
     -- @return true if intervals overlap, otherwise false.
     --
+
+select define_function_args('time_interval__overlaps_p','start_1,end_1,start_2,end_2');
+
 CREATE OR REPLACE FUNCTION time_interval__overlaps_p(
    overlaps_p__start_1 timestamptz,
    overlaps_p__end_1 timestamptz,
