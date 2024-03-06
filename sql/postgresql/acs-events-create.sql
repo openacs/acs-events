@@ -1148,6 +1148,8 @@ $$ LANGUAGE plpgsql;
      --
      -- @return  event_id of new event created.
 
+select define_function_args('acs_event__new_instance','event_id,date_offset');
+
 CREATE OR REPLACE FUNCTION acs_event__new_instance(
    new_instance__event_id integer,
    new_instance__date_offset interval
