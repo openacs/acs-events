@@ -1446,9 +1446,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('acs_event__shift','event_id;null,start_offset;0,end_offset;0');
-
 --
 -- procedure acs_event__shift/3
 --
@@ -1457,10 +1454,10 @@ select define_function_args('acs_event__shift','event_id;null,start_offset;0,end
      -- @author W. Scott Meeks
      --
      -- @param event_id      Event to shift.
-     -- @param start_offset  Adds this date interval to the
+     -- @param start_offset_interval  Adds this date interval to the
      --                      start_dates of the timespan of the event.
      --                      No effect on any null start_date.
-     -- @param end_offset    Adds this date interval to the
+     -- @param end_offset_interval    Adds this date interval to the
      --                      end_dates of the timespan of the event.
      --                      No effect on any null end_date.
      --
@@ -1468,8 +1465,8 @@ select define_function_args('acs_event__shift','event_id;null,start_offset;0,end
 
 CREATE OR REPLACE FUNCTION acs_event__shift(
    shift__event_id integer,      -- default null
-   shift__start_offset interval, -- default 0
-   shift__end_offset interval    -- default 0
+   shift__start_offset_interval interval, -- default 0
+   shift__end_offset_interval interval    -- default 0
 
 ) RETURNS integer AS $$
 DECLARE
@@ -1477,8 +1474,8 @@ DECLARE
 BEGIN
 
 --       update acs_events_dates
---       set    start_date = start_date + shift__start_offset,
---             end_date   = end_date + shift__end_offset
+--       set    start_date = start_date + shift__start_offset_interval,
+--             end_date   = end_date + shift__end_offset_interval
 --       where  event_id   = shift__event_id;
 
 	  -- Can not update view, so we do it the hard way
@@ -1491,8 +1488,8 @@ BEGIN
 	      and   s.interval_id = t.interval_id
           loop
 	       update time_intervals
-	       set    start_date = start_date + shift__start_offset,
-		      end_date   = end_date + shift__end_offset
+	       set    start_date = start_date + shift__start_offset_interval,
+		      end_date   = end_date + shift__end_offset_interval
 	       where  interval_id = rec_events.interval_id;
 	  end loop;
 
@@ -1509,9 +1506,7 @@ $$ LANGUAGE plpgsql;
 --
      -- Shifts the timespan of an event by the given offsets.
      --
-     -- JS: Overloaded function to make above compatible with Oracle behavior
-      -- JS: when an integer (for number of days) is supplied as a parameter.
-     --
+     -- Overloaded function to make above compatible with Oracle behavior
      --
      -- @param event_id      Event to shift.
      -- @param start_offset  Adds this number of days to the
@@ -1522,6 +1517,8 @@ $$ LANGUAGE plpgsql;
      --                      No effect on any null end_date.
      --
      -- @return 0 (procedure dummy)
+
+select define_function_args('acs_event__shift','event_id;null,start_offset;0,end_offset;0');
 
 CREATE OR REPLACE FUNCTION acs_event__shift(
    shift__event_id integer,     -- default null
@@ -1542,11 +1539,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-
-
--- added
-select define_function_args('acs_event__shift_all','event_id;null,start_offset;0,end_offset;0');
-
 --
 -- procedure acs_event__shift_all/3
 --
@@ -1557,10 +1549,10 @@ select define_function_args('acs_event__shift_all','event_id;null,start_offset;0
      --
      -- @param event_id      All events with the same
      --                      recurrence_id as this one will be shifted.
-     -- @param start_offset  Adds this date interval to the
+     -- @param start_offset_inverval  Adds this date interval to the
      --                      start_dates of the timespan of the event
      --                      instances.  No effect on any null start_date.
-     -- @param end_offset    Adds this date interval to the
+     -- @param end_offset_inverval    Adds this date interval to the
      --                      end_dates of the timespan of the event
      --                      instances.  No effect on any null end_date.
      --
@@ -1568,8 +1560,8 @@ select define_function_args('acs_event__shift_all','event_id;null,start_offset;0
 
 CREATE OR REPLACE FUNCTION acs_event__shift_all(
    shift_all__event_id integer,      -- default null
-   shift_all__start_offset interval, -- default 0
-   shift_all__end_offset interval    -- default 0
+   shift_all__start_offset_inverval interval, -- default 0
+   shift_all__end_offset_inverval interval    -- default 0
 
 ) RETURNS integer AS $$
 DECLARE
@@ -1578,8 +1570,8 @@ BEGIN
 
 
 --        update acs_events_dates
---        set    start_date    = start_date + shift_all__start_offset,
---              end_date      = end_date + shift_all__end_offset
+--        set    start_date    = start_date + shift_all__start_offset_inverval,
+--              end_date      = end_date + shift_all__end_offset_inverval
 --        where recurrence_id  = (select recurrence_id
 --                                from   acs_events
 --                                where  event_id = shift_all__event_id);
@@ -1595,8 +1587,8 @@ BEGIN
 
 	    PERFORM acs_event__shift(
 			rec_events.event_id,
-			shift_all__start_offset,
-			shift_all__end_offset
+			shift_all__start_offset_inverval,
+			shift_all__end_offset_inverval
 			);
 	end loop;
 
@@ -1604,7 +1596,6 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
---    end shift_all;
 
 
 
@@ -1616,7 +1607,6 @@ $$ LANGUAGE plpgsql;
      -- by the given offsets.
      --
      -- JS: Overloaded function to make above compatible with Oracle behavior
-     -- JS: when an integer (for number of days) is supplied as a parameter.
      --
      --
      -- @param event_id      All events with the same
@@ -1629,6 +1619,8 @@ $$ LANGUAGE plpgsql;
      --                      instances.  No effect on any null end_date.
      --
      -- @return 0 (procedure dummy)
+
+select define_function_args('acs_event__shift_all','event_id;null,start_offset;0,end_offset;0');
 
 CREATE OR REPLACE FUNCTION acs_event__shift_all(
    shift_all__event_id integer,     -- default null
