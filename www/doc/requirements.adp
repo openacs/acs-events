@@ -1,7 +1,11 @@
 
-<property name="context">{/doc/acs-events {ACS Events}} {ACS Events Service Requirements}</property>
+<property name="context">{/doc/acs-events/ {ACS Events}} {ACS Events Service Requirements}</property>
 <property name="doc(title)">ACS Events Service Requirements</property>
 <master>
+<style>
+div.sect2 > div.itemizedlist > ul.itemizedlist > li.listitem {margin-top: 16px;}
+div.sect3 > div.itemizedlist > ul.itemizedlist > li.listitem {margin-top: 6px;}
+</style>              
 <h2>ACS Events Service Requirements</h2>
 
 by W. Scott Meeks

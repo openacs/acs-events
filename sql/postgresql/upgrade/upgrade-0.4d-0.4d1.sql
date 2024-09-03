@@ -145,8 +145,8 @@ BEGIN
        where activity_id  = edit__activity_id;
 
        update acs_objects
-       set    title = coalesce(edit__name, name)
-       where activity_id  = edit__activity_id;
+       set    title = coalesce(edit__name, title)
+       where  object_id  = edit__activity_id;
 
        return 0;
 

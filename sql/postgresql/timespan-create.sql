@@ -185,9 +185,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('time_interval__shift','interval_id,start_offset;0,end_offset;0');
-
 --
 -- procedure time_interval__shift/3
 --
@@ -196,10 +193,10 @@ select define_function_args('time_interval__shift','interval_id,start_offset;0,e
      --
      -- @author W. Scott Meeks
      -- @param interval_id  The interval to update.
-     -- @param start_offset Adds this date interval to the
+     -- @param start_offset_intverval Adds this date interval to the
      --                     start_date of the interval.  No effect if 
      --                     start_date is null.
-     -- @param end_offset   Adds this date interval to the
+     -- @param end_offset_intverval   Adds this date interval to the
      --                     end_date of the interval.  No effect if 
      --                     end_date is null.
      --
@@ -207,15 +204,15 @@ select define_function_args('time_interval__shift','interval_id,start_offset;0,e
      --
 CREATE OR REPLACE FUNCTION time_interval__shift(
    shift__interval_id integer,
-   shift__start_offset interval, -- default 0,
-   shift__end_offset interval    -- default 0
+   shift__start_offset_intverval interval, -- default 0,
+   shift__end_offset_intverval interval    -- default 0
 
 ) RETURNS integer AS $$
 DECLARE 
 BEGIN
        update time_intervals
-       set    start_date = start_date + shift__start_offset,
-              end_date   = end_date + shift__end_offset
+       set    start_date = start_date + shift__start_offset_intverval,
+              end_date   = end_date + shift__end_offset_intverval
        where  interval_id = shift__interval_id;
 
        return 0;
@@ -234,7 +231,6 @@ $$ LANGUAGE plpgsql;
     -- fractional days.
     --
     -- JS: Overloaded function to make above compatible with Oracle behavior
-    -- JS: when an integer (for number of days) is supplied as a parameter.
     --
     -- @param interval_id  The interval to update.
     -- @param start_offset Adds this number of days to the
@@ -245,6 +241,9 @@ $$ LANGUAGE plpgsql;
     --                     end_date is null.
     --
     -- @return 0 (procedure dummy)
+
+select define_function_args('time_interval__shift','interval_id,start_offset;0,end_offset;0');
+    
 CREATE OR REPLACE FUNCTION time_interval__shift(
    shift__interval_id integer,
    shift__start_offset integer, -- default 0,
@@ -265,8 +264,6 @@ $$ LANGUAGE plpgsql;
 
 
 
-
--- added
 
 --
 -- procedure time_interval__overlaps_p/2
@@ -316,8 +313,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('time_interval__overlaps_p','interval_id,start_date;null,end_date;null');
 
 --
 -- procedure time_interval__overlaps_p/3
@@ -333,6 +328,7 @@ select define_function_args('time_interval__overlaps_p','interval_id,start_date;
     --
     -- @return true if the interval bounded by start_date through end_date, false otherwise.
     --
+
 CREATE OR REPLACE FUNCTION time_interval__overlaps_p(
    overlaps_p__interval_id integer,
    overlaps_p__start_date timestamptz, -- default null,
@@ -360,8 +356,6 @@ END;
 $$ LANGUAGE plpgsql; 
 
 
-
-
 --
 -- procedure time_interval__overlaps_p/4
 --
@@ -377,6 +371,9 @@ $$ LANGUAGE plpgsql;
     -- 
     -- @return true if intervals overlap, otherwise false.
     --
+
+select define_function_args('time_interval__overlaps_p','start_1,end_1,start_2,end_2');
+
 CREATE OR REPLACE FUNCTION time_interval__overlaps_p(
    overlaps_p__start_1 timestamptz,
    overlaps_p__end_1 timestamptz,
@@ -493,9 +490,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('time_interval__copy','interval_id,offset;0');
-
 --
 -- procedure time_interval__copy/2
 --
@@ -524,31 +518,31 @@ select define_function_args('time_interval__copy','interval_id,offset;0');
     --
     -- @author W. Scott Meeks
     --
-    -- @param interval_id   Interval to copy
-    -- @param offset        Interval is offset by this date interval
+    -- @param interval_id     Interval to copy
+    -- @param offset_interval Interval is offset by this date interval
     --
     -- @return interval_id of the copied interval
+
 CREATE OR REPLACE FUNCTION time_interval__copy(
    copy__interval_id integer,
-   copy__offset interval -- default 0
+   copy__offset_interval interval -- default 0
 
 ) RETURNS integer AS $$
-DECLARE    
+DECLARE
        interval_row           time_intervals%ROWTYPE;
        v_foo                 timestamptz;
 BEGIN
        select * into interval_row
        from   time_intervals
        where  interval_id = copy__interval_id;
-	
+
        return time_interval__new(
-                  (interval_row.start_date ::timestamp + copy__offset) :: timestamptz,
-                  (interval_row.end_date ::timestamp + copy__offset) :: timestamptz
+                  (interval_row.start_date ::timestamp + copy__offset_interval) :: timestamptz,
+                  (interval_row.end_date ::timestamp + copy__offset_interval) :: timestamptz
                   );
 
 END;
-$$ LANGUAGE plpgsql; 
-
+$$ LANGUAGE plpgsql;
 
 
 --
@@ -597,6 +591,9 @@ $$ LANGUAGE plpgsql;
     --
     -- @return interval_id of the copied interval
     --
+
+select define_function_args('time_interval__copy','interval_id,offset;0');
+
 CREATE OR REPLACE FUNCTION time_interval__copy(
    copy__interval_id integer,
    copy__offset integer -- default 0
@@ -674,8 +671,6 @@ comment on table timespans is '
 
 
 
-
--- added
 
 --
 -- procedure timespan__new/2
@@ -1146,8 +1141,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-
 --
 -- procedure timespan__overlaps_p/2
 --
@@ -1245,9 +1238,6 @@ $$ LANGUAGE plpgsql;
 
 
 
--- added
-select define_function_args('timespan__copy','timespan_id,offset');
-
 --
 -- procedure timespan__copy/2
 --
@@ -1264,7 +1254,7 @@ select define_function_args('timespan__copy','timespan_id,offset');
     --
 CREATE OR REPLACE FUNCTION timespan__copy(
    copy__timespan_id integer,
-   copy__offset interval --  default 0
+   copy__offset_interval interval --  default 0
 
 ) RETURNS integer AS $$
 DECLARE
@@ -1275,24 +1265,24 @@ BEGIN
        v_timespan_id := null;
 
        -- Loop over each interval in timespan, creating a new copy
-       for rec_timespan in 
-            select * 
+       for rec_timespan in
+            select *
             from timespans
             where timespan_id = copy__timespan_id
        loop
             v_interval_id := time_interval__copy(
-                                rec_timespan.interval_id, 
-                                copy__offset
+                                rec_timespan.interval_id,
+                                copy__offset_interval
                                 );
 
-            if v_timespan_id is null 
+            if v_timespan_id is null
             then
                  -- JS: NOTE DEFAULT BEHAVIOR OF timespan__new
                 v_timespan_id := timespan__new(v_interval_id);
             else
                 -- no copy, use whatever is generated by time_interval__copy
                 PERFORM timespan__join_interval(
-                                v_timespan_id, 
+                                v_timespan_id,
                                 v_interval_id,
                                 false);
             end if;
@@ -1302,9 +1292,7 @@ BEGIN
        return v_timespan_id;
 
 END;
-$$ LANGUAGE plpgsql; 
-
-
+$$ LANGUAGE plpgsql;
 
 
 --
@@ -1350,6 +1338,9 @@ $$ LANGUAGE plpgsql;
     --
     -- @return Id of copied timespan
     --
+
+select define_function_args('timespan__copy','timespan_id,offset');
+
 CREATE OR REPLACE FUNCTION timespan__copy(
    copy__timespan_id integer,
    copy__offset integer

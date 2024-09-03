@@ -1,7 +1,11 @@
 
-<property name="context">{/doc/acs-events {ACS Events}} {ACS Events Design Documentation}</property>
+<property name="context">{/doc/acs-events/ {ACS Events}} {ACS Events Design Documentation}</property>
 <property name="doc(title)">ACS Events Design Documentation</property>
 <master>
+<style>
+div.sect2 > div.itemizedlist > ul.itemizedlist > li.listitem {margin-top: 16px;}
+div.sect3 > div.itemizedlist > ul.itemizedlist > li.listitem {margin-top: 6px;}
+</style>              
 <h2>ACS Events Design Documentation</h2>
 
 by <a href="mailto:smeeks\@arsdigita.com">W. Scott Meeks</a>
